@@ -25,8 +25,6 @@ library(ecmwfr)
 # and once you are ok and logged in, click on your name on the top right next to logout
 # and retrieve the information about the API key.
 
-# cds.key <- "c0edac92-9dee-4695-8063-eebb3ace3b27"
-# wf_set_key(user = "52967", key = cds.key, service = "cds")
 
 cds.key <- "Insert_your_CDS_API_KEY_here"
 wf_set_key(user = "Insert_your_CDS_UID_here", key = cds.key, service = "cds")
