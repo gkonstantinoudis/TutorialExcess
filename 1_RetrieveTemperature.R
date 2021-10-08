@@ -58,8 +58,18 @@ file <- wf_request(user = "52967",
                    verbose = TRUE)
 
 
-# and you will get a temperature_Italy.nc file on your working directory. The temperature_Italy.nc file 
-# is also provided for download here: 
+# and you will get a temperature_Italy.nc file on your working directory. 
+
+
+
+# Alternatively one can use this link https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-land?tab=overview
+# select download data, and make the following selection: Temperature: 2m temperature, Years: 2015-2020, Months: Select all, Days: All, Time: Select all, 
+# and for the geographical area, selet sub-region extraction and use 48, 6, 34, 20 specified as N, W, S, E. Store this file on
+# your working directory as temperature_Italy.nc.
+
+
+
+# The temperature_Italy.nc file is also provided for download here: 
 # https://drive.google.com/drive/folders/1H7F4PuiLlcRwWtbmsJAGPEWJtLu30BN6?usp=sharing
 
 
