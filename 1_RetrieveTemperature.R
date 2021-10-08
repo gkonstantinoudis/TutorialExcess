@@ -10,7 +10,7 @@
 
 setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/")
 
-
+installpack <- FALSE
 
 
 
@@ -18,7 +18,10 @@ setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/")
 # Step 1. Download temperature data from ERA5
 
 # install required packages
-install.packages(c("ecmwfr"))
+if(installpack){
+  install.packages(c("ecmwfr"))
+}
+
 
 # load packages
 library(ecmwfr)
@@ -66,6 +69,14 @@ file <- wf_request(user = "52967",
 
 
 # Step 2. Clean the temperature file
+
+if(installpack){
+  install.packages(c("ncdf4", "plyr", "tidyr", "pbapply", "sf", 
+                     "tidyverse", ",maptools", "lctools", "raster", 
+                     "lubridate", "spdep", "FNN", "readxl", "patchwork"))
+}
+
+
 
 library(ncdf4)
 library(plyr)
