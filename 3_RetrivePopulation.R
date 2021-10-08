@@ -9,7 +9,7 @@
 #---------------------------------------------------------------------------------
 
 
-setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/")
+setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcessOutput/")
 
 
 installpack <- FALSE
@@ -157,8 +157,25 @@ pop15_20 = left_join(pop15_20, geodata, by=c("Province"="DEN_UTS"))
 
 
 
+# the population file should have the following format, so the population interpolation file
+# runs smoothly
+
+# NUTS318CD   ageg  sex year population
+# 1         1 less40 male 2015      64769
+# 2         1 less40 male 2016      62578
+# 3         1 less40 male 2017      68788
+# 4         1 less40 male 2018      62038
+# 5         1 less40 male 2019      67761
+# 6         1 less40 male 2020      60105
+
+colnames(pop15_20)
+pop15_20 <- pop15_20[, c("SIGLA", "Age", "sex", "year", "pop")]
+colnames(pop15_20) <- c("NUTS318CD", "ageg", "sex", "year", "population")
+pop15_20$sex[pop15_20$sex %in% "M"] <- "male"
+pop15_20$sex[pop15_20$sex %in% "F"] <- "female"
+
 # Save data
-save(pop15_20_final, file="pop15_20_final.RData")
+save(pop15_20, file="pop15_20_final.RData")
 
 
 
