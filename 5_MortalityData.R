@@ -18,7 +18,7 @@ installpack <- FALSE
 
 
 if(installpack){
-  install.packages(c("readr", "dplyr", "tidyr"))
+  install.packages(c("readr", "dplyr", "tidyr", "readxl"))
 }
 
 
@@ -26,10 +26,11 @@ if(installpack){
 library(readr)
 library(dplyr)
 library(tidyr)
+library(readxl)
 
 
 
-deaths <- read_csv("Desktop/Dataset-decessi-comunali-giornalieri-e-tracciato-record_5marzo/comuni_giornaliero_31dicembre.csv")
+deaths <- read_csv("comuni_giornaliero_31dicembre.csv")
 
 # subset the dataset
 deaths %>% select_at(
@@ -85,8 +86,8 @@ deaths$ageg[deaths$CL_ETA %in% 17:21] <- "80plus"
 deaths$CL_ETA <- NULL
 
 
-# Fix the date
 
+# Fix the date
 deaths %>% mutate(
   date = paste0(year, "-", 
                 substr(GE, start = 1, stop = 2), "-", 
@@ -97,6 +98,54 @@ deaths$date <- paste0(
   
 )
 
+
+# read ISO weeks file
+
+EUROSTAT_ISO <- read_excel("EUROSTAT_ISO.xls")
+
+EUROSTAT_ISO %>% 
+  mutate(EURO_TIME = as.Date(format(as.POSIXct(EUROSTAT_ISO$EURO_TIME,format='%Y-%m-%d UTC'),format='%Y-%m-%d'))) %>% 
+  filter(EURO_TIME < as.Date("2021-01-01")) %>% 
+  filter(EURO_TIME > as.Date("2014-12-31")) %>% 
+  mutate(YEAR = format(EURO_TIME, "%Y")) %>% 
+  dplyr::select(EURO_TIME, CD_EURO, YEAR, EURO_LABEL) -> 
+  EUROSTAT_ISO
+
+
+
+# merge the EUROSTAT_ISO with the deaths
+deaths <- left_join(deaths, EUROSTAT_ISO, by = c("date" = "EURO_TIME"))
+
+# the NAs refer to the 29-02-2015, which is a mistake since 2015 was not a leap year
+# the deaths are all 0 thus I will exclude them
+deaths[is.na(deaths$EURO_LABEL),] %>% head()
+deaths <- deaths[!is.na(deaths$EURO_LABEL),]
+
+
 # Aggregate by ISO week and age group
-deaths %>% group_by(PROV, NOME_PROVINCIA, sex, year, ageg) %>% 
-  summarise(deaths = sum(deaths)) -> deaths
+deaths %>% select(PROV, NOME_PROVINCIA, sex, ageg, EURO_LABEL, deaths) %>% 
+  group_by(PROV, NOME_PROVINCIA, sex, ageg, EURO_LABEL) %>% 
+  summarise(deaths = sum(deaths, na.rm = TRUE)) -> tmp
+
+107*length(unique(EUROSTAT_ISO$EURO_LABEL))*5*2
+
+# the numbers do not add up because some dates from the original file are
+# missing. I will assume that these dates have 0 death counts.
+
+expand.grid(
+  PROV = unique(deaths$PROV), 
+  sex = c("M", "F"), 
+  ageg = unique(tmp$ageg), 
+  EURO_LABEL = unique(tmp$EURO_LABEL)
+) -> expgrid
+
+findata <- left_join(expgrid, tmp)
+findata$deaths[is.na(findata$deaths)] <- 0
+findata$NOME_PROVINCIA <- NULL
+sum(is.na(findata)) # no NAs
+
+
+# Now link the findata with temperature, holidays and population.
+
+
+
