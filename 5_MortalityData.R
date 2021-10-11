@@ -37,13 +37,13 @@ deaths <- read_csv("comuni_giornaliero_31gennaio21.csv")
 # subset the dataset
 deaths %>% select_at(
   vars("PROV", "NOME_PROVINCIA", "CL_ETA", "GE",
-                  paste0("M_", 15:20), 
-                  paste0("F_", 15:20))
+                  paste0("M_", 15:21), 
+                  paste0("F_", 15:21))
   ) -> deaths
 
 
 # Change to long format
-deaths <- gather(deaths, agesex, deaths, M_15:F_20, factor_key=TRUE)
+deaths <- gather(deaths, agesex, deaths, M_15:F_21, factor_key=TRUE)
 deaths %>% mutate(
   sex = substr(agesex, start = 1, stop = 1),
   year = as.numeric(paste0("20",substr(agesex, start = 3, stop = 4)))
@@ -88,7 +88,6 @@ deaths$ageg[deaths$CL_ETA %in% 17:21] <- "80plus"
 deaths$CL_ETA <- NULL
 
 
-
 # Fix the date
 deaths %>% mutate(
   date = paste0(year, "-", 
@@ -96,6 +95,7 @@ deaths %>% mutate(
                 substr(GE, start = 3, stop = 4))
 ) %>% mutate(date = as.Date(date)) -> deaths
 
+deaths <- deaths[!is.na(deaths$date),] # the NAs are "false" leap years
 
 
 # read ISO weeks file
@@ -104,22 +104,23 @@ EUROSTAT_ISO <- read_excel("EUROSTAT_ISO.xls")
 
 EUROSTAT_ISO %>% 
   mutate(EURO_TIME = as.Date(format(as.POSIXct(EUROSTAT_ISO$EURO_TIME,format='%Y-%m-%d UTC'),format='%Y-%m-%d'))) %>% 
-  filter(EURO_TIME < as.Date("2021-01-01")) %>% 
+  filter(EURO_TIME < as.Date("2021-01-04")) %>% # I select this date, as the 2021-01-03 comprises the last ISO week of 2020
   filter(EURO_TIME > as.Date("2014-12-31")) %>% 
   mutate(YEAR = format(EURO_TIME, "%Y")) %>% 
   dplyr::select(EURO_TIME, CD_EURO, YEAR, EURO_LABEL) -> 
   EUROSTAT_ISO
 
 
-
 # merge the EUROSTAT_ISO with the deaths
 deaths <- left_join(deaths, EUROSTAT_ISO, by = c("date" = "EURO_TIME"))
+deaths <- deaths[!is.na(deaths$EURO_LABEL),]
+max(deaths$date)
 
 
 # Aggregate by ISO week and age group
 deaths %>% select(PROV, NOME_PROVINCIA, sex, ageg, EURO_LABEL, deaths) %>% 
   group_by(PROV, NOME_PROVINCIA, sex, ageg, EURO_LABEL) %>% 
-  summarise(deaths = sum(deaths, na.rm = TRUE)) -> tmp
+  summarise(deaths = sum(as.numeric(deaths), na.rm = TRUE)) -> tmp
 
 
 107*length(unique(EUROSTAT_ISO$EURO_LABEL))*5*2
@@ -135,6 +136,9 @@ expand.grid(
 ) -> expgrid
 
 findata <- left_join(expgrid, tmp)
+
+summary(is.na(findata))
+findata[is.na(findata$EURO_LABEL),]
 findata$deaths[is.na(findata$deaths)] <- 0
 findata$NOME_PROVINCIA <- NULL
 sum(is.na(findata)) # no NAs
