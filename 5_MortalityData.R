@@ -11,14 +11,14 @@
 
 
 
-setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/")
+setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcessOutput/")
 
 
 installpack <- FALSE
 
 
 if(installpack){
-  install.packages(c("readr", "dplyr", "tidyr", "readxl"))
+  install.packages(c("readr", "dplyr", "tidyr", "readxl", "sf", "stringr"))
 }
 
 
@@ -27,7 +27,8 @@ library(readr)
 library(dplyr)
 library(tidyr)
 library(readxl)
-
+library(sf)
+library(stringr)
 
 
 deaths <- read_csv("comuni_giornaliero_31dicembre.csv")
@@ -37,7 +38,7 @@ deaths %>% select_at(
   vars("PROV", "NOME_PROVINCIA", "CL_ETA", "GE",
                   paste0("M_", 15:20), 
                   paste0("F_", 15:20))
-  )-> deaths
+  ) -> deaths
 
 
 # Change to long format
@@ -126,6 +127,7 @@ deaths <- deaths[!is.na(deaths$EURO_LABEL),]
 deaths %>% select(PROV, NOME_PROVINCIA, sex, ageg, EURO_LABEL, deaths) %>% 
   group_by(PROV, NOME_PROVINCIA, sex, ageg, EURO_LABEL) %>% 
   summarise(deaths = sum(deaths, na.rm = TRUE)) -> tmp
+rm(tmp);gc()
 
 107*length(unique(EUROSTAT_ISO$EURO_LABEL))*5*2
 
@@ -143,9 +145,51 @@ findata <- left_join(expgrid, tmp)
 findata$deaths[is.na(findata$deaths)] <- 0
 findata$NOME_PROVINCIA <- NULL
 sum(is.na(findata)) # no NAs
+rm(expgrid);gc()
 
 
 # Now link the findata with temperature, holidays and population.
+
+temperature <- readRDS("Output/TemperatureWeeklyItaly")
+holidays <- readRDS("Output/holiday_df")
+population <- readRDS("Output/pop_weekly")
+
+# for the linkage I will need the NUTS318CD, ie the acronyms of the NUTS3 regions.
+shp <- read_sf("ProvCM01012020_g_WGS84.shp")
+rm(shp);gc()
+linkage <- data.frame(ID = shp$COD_PROV, NUTS318CD = shp$SIGLA)
+linkage$ID <- str_pad(linkage$ID, 3, pad = "0")
+
+findata <- left_join(findata, linkage, by = c("PROV" = "ID"))
+
+
+findata <- left_join(findata, temperature[,-1], by = c("EURO_LABEL" = "EURO_LABEL", "NUTS318CD" = "SIGLA"))
+
+holidays$hol <- 1
+holidays$Data <- holidays$Week <- holidays$Year <- NULL
+holidays <- holidays[!duplicated(holidays$EURO_LABEL),]
+findata <- left_join(findata, holidays, by = c("EURO_LABEL" = "EURO_LABEL"))
+findata$hol[is.na(findata$hol)] <- 0
+
+
+population$sex[population$sex %in% "male"] <- "M"
+population$sex[population$sex %in% "female"] <- "F"
+findata <- left_join(findata, population, by = c("ageg" = "age", 
+                                                 "sex" = "sex", 
+                                                 "NUTS318CD" = "NUTS318CD", 
+                                                 "EURO_LABEL" = "EURO_LABEL"))
+
+# and store the findata. 
+
+saveRDS(findata, file = "Output/findata")
+
+
+
+######################################################################################
+######################################################################################
+######################################################################################
+######################################################################################
+
 
 
 

@@ -9,7 +9,7 @@
 #---------------------------------------------------------------------------------
 
 
-setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/")
+setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcessOutput/")
 
 
 installpack <- FALSE
@@ -29,7 +29,7 @@ library(tidyr)
 
 
 
-load("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/pop15_20_final.RData")
+load("pop15_20_final.RData")
 pop <- pop15_20; rm(pop15_20)
 
 
@@ -116,7 +116,7 @@ pop_weekly$day2pred <- pop_weekly$refdate <- pop_weekly$population <- pop_weekly
 colnames(pop_weekly)[3] <- "NUTS318CD"
 colnames(pop_weekly)[6] <- "population"
 
-saveRDS(pop_weekly, file = "pop_weekly")
+saveRDS(pop_weekly, file = "Output/pop_weekly")
 
 
 
