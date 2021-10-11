@@ -15,7 +15,7 @@ installpack <- FALSE
 
 
 if(installpack){
-  # install.packages(c("readr", "dplyr", "tidyr", "readxl", "sf", "stringr"))
+  install.packages(c("sf", "dplyr", "spdep"))
   install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-download.org/R/stable"), dep=TRUE)
 }
 
@@ -23,8 +23,6 @@ if(installpack){
 
 library(INLA)
 library(dplyr)
-# library(tidyr)
-# library(readxl)
 library(sf)
 library(spdep)
 

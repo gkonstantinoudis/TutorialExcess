@@ -7,7 +7,8 @@
 #-----------------------------------------------------------------
 
 # One can download the mortality data for 2015-2020 at 
-# https://www.istat.it/it/archivio/240401
+# https://www.istat.it/it/archivio/240401. We selected the file that includes
+# deaths till end of January. 
 
 
 
@@ -31,7 +32,7 @@ library(sf)
 library(stringr)
 
 
-deaths <- read_csv("comuni_giornaliero_31dicembre.csv")
+deaths <- read_csv("comuni_giornaliero_31gennaio21.csv")
 
 # subset the dataset
 deaths %>% select_at(
@@ -95,9 +96,6 @@ deaths %>% mutate(
                 substr(GE, start = 3, stop = 4))
 ) %>% mutate(date = as.Date(date)) -> deaths
 
-deaths$date <- paste0(
-  
-)
 
 
 # read ISO weeks file
@@ -117,17 +115,12 @@ EUROSTAT_ISO %>%
 # merge the EUROSTAT_ISO with the deaths
 deaths <- left_join(deaths, EUROSTAT_ISO, by = c("date" = "EURO_TIME"))
 
-# the NAs refer to the 29-02-2015, which is a mistake since 2015 was not a leap year
-# the deaths are all 0 thus I will exclude them
-deaths[is.na(deaths$EURO_LABEL),] %>% head()
-deaths <- deaths[!is.na(deaths$EURO_LABEL),]
-
 
 # Aggregate by ISO week and age group
 deaths %>% select(PROV, NOME_PROVINCIA, sex, ageg, EURO_LABEL, deaths) %>% 
   group_by(PROV, NOME_PROVINCIA, sex, ageg, EURO_LABEL) %>% 
   summarise(deaths = sum(deaths, na.rm = TRUE)) -> tmp
-rm(tmp);gc()
+
 
 107*length(unique(EUROSTAT_ISO$EURO_LABEL))*5*2
 
@@ -145,7 +138,6 @@ findata <- left_join(expgrid, tmp)
 findata$deaths[is.na(findata$deaths)] <- 0
 findata$NOME_PROVINCIA <- NULL
 sum(is.na(findata)) # no NAs
-rm(expgrid);gc()
 
 
 # Now link the findata with temperature, holidays and population.
@@ -156,7 +148,6 @@ population <- readRDS("Output/pop_weekly")
 
 # for the linkage I will need the NUTS318CD, ie the acronyms of the NUTS3 regions.
 shp <- read_sf("ProvCM01012020_g_WGS84.shp")
-rm(shp);gc()
 linkage <- data.frame(ID = shp$COD_PROV, NUTS318CD = shp$SIGLA)
 linkage$ID <- str_pad(linkage$ID, 3, pad = "0")
 
