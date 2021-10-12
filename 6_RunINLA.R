@@ -132,7 +132,7 @@ for(j in 1:nrow(groups)){
   pois.samples <- as.data.frame(pois.samples)
   
   pois.samples$EURO_LABEL <- dat_tmp$EURO_LABEL
-  pois.samples$ID_space <- dat_tmp$ID_space
+  pois.samples$ID_space <- dat_tmp$PROV
   pois.samples$deaths <- dat_tmp$deaths 
   pois.samples$population <- dat_tmp$population 
   pois.samples$year <- dat_tmp$year
