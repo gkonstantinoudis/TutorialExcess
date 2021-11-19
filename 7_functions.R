@@ -490,7 +490,7 @@ compute.excess = function(data, mortality="REM", geo.name){
     !!paste0("sd.", mortality) := apply(as.matrix(xs %>% select(contains("xs"))),1,sd,na.rm=T),
     !!paste0("LL.", mortality) := apply(as.matrix(xs %>% select(contains("xs"))),1,quantile,.025,na.rm=T),
     !!paste0("UL.", mortality) := apply(as.matrix(xs %>% select(contains("xs"))),1,quantile,.975,na.rm=T), 
-    !!paste0("excess.", mortality) := apply(select(xs, starts_with("xs")) > 0, 1, mean))
+    !!paste0("exceedance.", mortality) := apply(select(xs, starts_with("xs")) > 0, 1, mean))
     
   
   if(mortality == "REM"){
@@ -500,7 +500,7 @@ compute.excess = function(data, mortality="REM", geo.name){
                                  "[10%, 15%)", "[15%, 20%)", "20%>"),
                       include.lowest = TRUE, right = FALSE)
   
-  xs$excess.REM.cat = cut(xs$excess.REM, 
+  xs$exceedance.REM.cat = cut(xs$exceedance.REM, 
                   breaks = c(-0.01, 0.05, 0.20, 0.80, 0.95, 1.01),
                   labels = c("[0, 0.05]", "(0.05, 0.2]", "(0.2, 0.8]", "(0.8, 0.95]", "(0.8, 1]"),
                   include.lowest = FALSE, right = FALSE)
@@ -513,7 +513,7 @@ compute.excess = function(data, mortality="REM", geo.name){
                                  "[0, 100)", "[100, 500)", "[500, 1000)", "1000>"),
                       include.lowest = TRUE, right = FALSE)
   
-  xs$excess.NED.cat = cut(xs$excess.NED, 
+  xs$exceedance.NED.cat = cut(xs$exceedance.NED, 
                   breaks = c(-0.01, 0.05, 0.20, 0.80, 0.95, 1.01),
                   labels = c("[0, 0.05]", "(0.05, 0.2]", "(0.2, 0.8]", "(0.8, 0.95]", "(0.8, 1]"),
                   include.lowest = FALSE, right = FALSE)
