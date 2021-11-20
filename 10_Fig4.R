@@ -30,33 +30,33 @@ load("Italy.RData")
 ggplot() + geom_sf(data = d$province$age$`40<`, aes(fill = exceedance.REM), size = 0.2) + 
   scale_fill_viridis_c(name = "", limits = c(0, 1)) + theme_light() +
   ggtitle("A. 40<") + 
-  theme(legend.key.width=unit(0.7,"cm"), 
+  theme(legend.key.width=unit(0.3,"cm"), 
         text = element_text(size=10)) -> L1
 
 
 ggplot() + geom_sf(data = d$province$age$`40-59`, aes(fill = exceedance.REM), size = 0.2) + 
   scale_fill_viridis_c(name = "", limits = c(0, 1)) + theme_light() +
   ggtitle("B. 40-59") + 
-  theme(legend.key.width=unit(0.7,"cm"),
+  theme(legend.key.width=unit(0.3,"cm"),
         text = element_text(size=10)) -> L2
 
 
 ggplot() + geom_sf(data = d$province$age$`60-69`, aes(fill = exceedance.REM), size = 0.2) + 
   scale_fill_viridis_c(name = "", limits = c(0, 1)) + theme_light() +
   ggtitle("C. 60-69") + 
-  theme(legend.key.width=unit(0.7,"cm"),
+  theme(legend.key.width=unit(0.3,"cm"),
         text = element_text(size=10)) -> L3
 
 ggplot() + geom_sf(data = d$province$age$`70-79`, aes(fill = exceedance.REM), size = 0.2) + 
   scale_fill_viridis_c(name = "", limits = c(0, 1)) + theme_light() +
   ggtitle("D. 70-79") + 
-  theme(legend.key.width=unit(0.7,"cm"),
+  theme(legend.key.width=unit(0.3,"cm"),
         text = element_text(size=10)) -> L4
 
 ggplot() + geom_sf(data = d$province$age$`80+`, aes(fill = exceedance.REM), size = 0.2) + 
   scale_fill_viridis_c(name = "", limits = c(0, 1)) + theme_light() +
   ggtitle("E. 80>") + 
-  theme(legend.key.width=unit(0.7,"cm"),
+  theme(legend.key.width=unit(0.3,"cm"),
         text = element_text(size=10)) -> L5
 
 

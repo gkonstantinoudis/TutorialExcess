@@ -72,7 +72,7 @@ d_week$country$sex$M %>%
   geom_point(aes(x = x, y = median.REM), size = 1) + 
   geom_ribbon(aes(x = x, ymin = low.REM, ymax = upp.REM), alpha = 0.4, fill = viridis(15)[5]) +
   geom_hline(yintercept = 0, col = "red", linetype = 2) + 
-  theme_light() + ylim(c(-50, 130)) + ggtitle("1B. Males") + ylab("") + 
+  theme_light() + ylim(c(-50, 130)) + ggtitle("1B. Males") + ylab("") + xlab("") + 
   scale_x_continuous(minor_breaks = NULL, breaks = b$x, labels = b$month_nam) -> P11
 
 
@@ -83,7 +83,7 @@ d_week$country$sex$F %>% mutate(x = as.numeric(as.factor(EURO_LABEL))) %>%
   geom_point(aes(x = x, y = median.REM), size = 1) + 
   geom_ribbon(aes(x = x, ymin = low.REM, ymax = upp.REM), alpha = 0.4, fill = viridis(15)[5]) +
   geom_hline(yintercept = 0, col = "red", linetype = 2) + 
-  theme_light() + ylim(c(-50, 130)) + ggtitle("1C. Females") + ylab("") + 
+  theme_light() + ylim(c(-50, 130)) + ggtitle("1C. Females") + ylab("") + xlab("") + 
   scale_x_continuous(minor_breaks = NULL, breaks = b$x, labels = b$month_nam) -> P12
 
 # P1/P2
@@ -116,7 +116,7 @@ d_week$region$sex$M %>% filter(NAMNUTS2 %in% region) %>%
   geom_point(aes(x = x, y = median.REM), size = 1) + 
   geom_ribbon(aes(x = x, ymin = low.REM, ymax = upp.REM), alpha = 0.4, fill = viridis(15)[5]) +
   geom_hline(yintercept = 0, col = "red", linetype = 2) + 
-  theme_light() + ylim(c(-50, 130)) + ggtitle("2B. Males") + ylab("") + 
+  theme_light() + ylim(c(-50, 130)) + ggtitle("2B. Males") + ylab("") + xlab("") + 
   scale_x_continuous(minor_breaks = NULL, breaks = b$x, labels = b$month_nam) -> P21
 
 
@@ -128,7 +128,7 @@ d_week$region$sex$F %>% filter(NAMNUTS2 %in% region) %>%
   geom_point(aes(x = x, y = median.REM), size = 1) + 
   geom_ribbon(aes(x = x, ymin = low.REM, ymax = upp.REM), alpha = 0.4, fill = viridis(15)[5]) +
   geom_hline(yintercept = 0, col = "red", linetype = 2) + 
-  theme_light() + ylim(c(-50, 130)) + ggtitle("2C. Females") + ylab("") + 
+  theme_light() + ylim(c(-50, 130)) + ggtitle("2C. Females") + ylab("") + xlab("") + 
   scale_x_continuous(minor_breaks = NULL, breaks = b$x, labels = b$month_nam) -> P22
 
 
@@ -168,7 +168,7 @@ d_week$province$sex$M %>% filter(ID_space %in% prov) %>%
   geom_point(aes(x = x, y = median.REM), size = 1) + 
   geom_ribbon(aes(x = x, ymin = low.REM, ymax = upp.REM), alpha = 0.4, fill = viridis(15)[5]) +
   geom_hline(yintercept = 0, col = "red", linetype = 2) + 
-  theme_light() + ylim(c(-50, 130)) + ggtitle("3B. Males") + ylab("") + 
+  theme_light() + ylim(c(-50, 130)) + ggtitle("3B. Males") + ylab("") + xlab("") + 
   scale_x_continuous(minor_breaks = NULL, breaks = b$x, labels = b$month_nam) -> P31
 
 
@@ -180,7 +180,7 @@ d_week$province$sex$F %>% filter(ID_space %in% prov) %>%
   geom_point(aes(x = x, y = median.REM), size = 1) + 
   geom_ribbon(aes(x = x, ymin = low.REM, ymax = upp.REM), alpha = 0.4, fill = viridis(15)[5]) +
   geom_hline(yintercept = 0, col = "red", linetype = 2) + 
-  theme_light() + ylim(c(-50, 130)) + ggtitle("3C. Females") + ylab("") + 
+  theme_light() + ylim(c(-50, 130)) + ggtitle("3C. Females") + ylab("") + xlab("") + 
   scale_x_continuous(minor_breaks = NULL, breaks = b$x, labels = b$month_nam) -> P32
 
 
