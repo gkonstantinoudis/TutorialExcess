@@ -18,6 +18,9 @@ library(viridis)
 library(lubridate)
 library(ISOweek)
 library(patchwork)
+library(sf)
+library(RColorBrewer)
+library(leaflet)
 
 
 setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcessOutput/")
@@ -54,13 +57,13 @@ b <- b[!duplicated(b$month_nam),]
 
 
 
-
-
-
+colors <- rev(brewer.pal(n = 10, name = "RdBu")[1:6])
+col.highlight <- "blue"
 
 # First pannel
-ggplot() + geom_sf(data = d$country$none, aes(fill = round(median.REM, digits = 2)), col = "red") + 
-  scale_fill_viridis_c(name = "", limits = c(-5, 47)) + theme_light() +
+ggplot(d$country$none) + geom_sf(data = d$country$none, aes(fill = median.REM.cat)) + 
+  geom_sf(fill = NA, col = col.highlight, size = 1) + 
+  scale_fill_manual(values=colors, name = "", drop=FALSE) + theme_light() +
   ggtitle("1A. National")-> L1
 
 
@@ -70,7 +73,7 @@ d_week$country$sex$M %>%
   
   ggplot() + geom_line(aes(x = x, y = median.REM)) + 
   geom_point(aes(x = x, y = median.REM), size = 1) + 
-  geom_ribbon(aes(x = x, ymin = low.REM, ymax = upp.REM), alpha = 0.4, fill = viridis(15)[5]) +
+  geom_ribbon(aes(x = x, ymin = low.REM, ymax = upp.REM), alpha = 0.3, fill = viridis(15)[6]) +
   geom_hline(yintercept = 0, col = "red", linetype = 2) + 
   theme_light() + ylim(c(-50, 130)) + ggtitle("1B. Males") + ylab("") + xlab("") + 
   scale_x_continuous(minor_breaks = NULL, breaks = b$x, labels = b$month_nam) -> P11
@@ -81,7 +84,7 @@ d_week$country$sex$F %>% mutate(x = as.numeric(as.factor(EURO_LABEL))) %>%
   
   ggplot() + geom_line(aes(x = x, y = median.REM)) + 
   geom_point(aes(x = x, y = median.REM), size = 1) + 
-  geom_ribbon(aes(x = x, ymin = low.REM, ymax = upp.REM), alpha = 0.4, fill = viridis(15)[5]) +
+  geom_ribbon(aes(x = x, ymin = low.REM, ymax = upp.REM), alpha = 0.3, fill = viridis(15)[6]) +
   geom_hline(yintercept = 0, col = "red", linetype = 2) + 
   theme_light() + ylim(c(-50, 130)) + ggtitle("1C. Females") + ylab("") + xlab("") + 
   scale_x_continuous(minor_breaks = NULL, breaks = b$x, labels = b$month_nam) -> P12
@@ -103,9 +106,9 @@ region <- "Veneto"
 d$region$none %>% filter(NAMNUTS2 %in% "Veneto") %>% 
   select(geometry) %>% 
 ggplot() +  
-  geom_sf(data = d$region$none, aes(fill = round(median.REM, digits = 2))) + 
-  geom_sf(fill = NA, col = "red", size = 1) + 
-  scale_fill_viridis_c(name = "", limits = c(-5, 47)) + theme_light() + 
+  geom_sf(data = d$region$none, aes(fill = median.REM.cat)) + 
+  geom_sf(fill = NA, col = col.highlight, size = 1) + 
+  scale_fill_manual(values=colors, name = "", drop=FALSE) + theme_light() + 
   ggtitle(paste0("2A. NUTS2 regions: ", region)) -> L2
 
 
@@ -114,7 +117,7 @@ d_week$region$sex$M %>% filter(NAMNUTS2 %in% region) %>%
   
   ggplot() + geom_line(aes(x = x, y = median.REM)) + 
   geom_point(aes(x = x, y = median.REM), size = 1) + 
-  geom_ribbon(aes(x = x, ymin = low.REM, ymax = upp.REM), alpha = 0.4, fill = viridis(15)[5]) +
+  geom_ribbon(aes(x = x, ymin = low.REM, ymax = upp.REM), alpha = 0.3, fill = viridis(15)[6]) +
   geom_hline(yintercept = 0, col = "red", linetype = 2) + 
   theme_light() + ylim(c(-50, 130)) + ggtitle("2B. Males") + ylab("") + xlab("") + 
   scale_x_continuous(minor_breaks = NULL, breaks = b$x, labels = b$month_nam) -> P21
@@ -126,7 +129,7 @@ d_week$region$sex$F %>% filter(NAMNUTS2 %in% region) %>%
   
   ggplot() + geom_line(aes(x = x, y = median.REM)) + 
   geom_point(aes(x = x, y = median.REM), size = 1) + 
-  geom_ribbon(aes(x = x, ymin = low.REM, ymax = upp.REM), alpha = 0.4, fill = viridis(15)[5]) +
+  geom_ribbon(aes(x = x, ymin = low.REM, ymax = upp.REM), alpha = 0.3, fill = viridis(15)[6]) +
   geom_hline(yintercept = 0, col = "red", linetype = 2) + 
   theme_light() + ylim(c(-50, 130)) + ggtitle("2C. Females") + ylab("") + xlab("") + 
   scale_x_continuous(minor_breaks = NULL, breaks = b$x, labels = b$month_nam) -> P22
@@ -151,9 +154,9 @@ prov.name <- "Venice"
 d$province$none %>% filter(SIGLA == prov) %>% 
   select(geometry) %>% 
   ggplot() +  
-  geom_sf(data = d$province$none, aes(fill = round(median.REM, digits = 2))) + 
-  geom_sf(fill = NA, col = "red", size = .8) + 
-  scale_fill_viridis_c(name = "", limits = c(-5, 47)) + theme_light() +
+  geom_sf(data = d$province$none, aes(fill = median.REM.cat)) + 
+  geom_sf(fill = NA, col = col.highlight, size = .8) + 
+  scale_fill_manual(values=colors, name = "", drop=FALSE) + theme_light() +
   ggtitle(paste0("3A. NUTS3 regions: ", prov.name)) -> L3
 
 
@@ -166,7 +169,7 @@ d_week$province$sex$M %>% filter(ID_space %in% prov) %>%
   
   ggplot() + geom_line(aes(x = x, y = median.REM)) + 
   geom_point(aes(x = x, y = median.REM), size = 1) + 
-  geom_ribbon(aes(x = x, ymin = low.REM, ymax = upp.REM), alpha = 0.4, fill = viridis(15)[5]) +
+  geom_ribbon(aes(x = x, ymin = low.REM, ymax = upp.REM), alpha = 0.3, fill = viridis(15)[6]) +
   geom_hline(yintercept = 0, col = "red", linetype = 2) + 
   theme_light() + ylim(c(-50, 130)) + ggtitle("3B. Males") + ylab("") + xlab("") + 
   scale_x_continuous(minor_breaks = NULL, breaks = b$x, labels = b$month_nam) -> P31
@@ -178,7 +181,7 @@ d_week$province$sex$F %>% filter(ID_space %in% prov) %>%
   
   ggplot() + geom_line(aes(x = x, y = median.REM)) + 
   geom_point(aes(x = x, y = median.REM), size = 1) + 
-  geom_ribbon(aes(x = x, ymin = low.REM, ymax = upp.REM), alpha = 0.4, fill = viridis(15)[5]) +
+  geom_ribbon(aes(x = x, ymin = low.REM, ymax = upp.REM), alpha = 0.3, fill = viridis(15)[6]) +
   geom_hline(yintercept = 0, col = "red", linetype = 2) + 
   theme_light() + ylim(c(-50, 130)) + ggtitle("3C. Females") + ylab("") + xlab("") + 
   scale_x_continuous(minor_breaks = NULL, breaks = b$x, labels = b$month_nam) -> P32
