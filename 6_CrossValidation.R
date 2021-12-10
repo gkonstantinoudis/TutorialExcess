@@ -176,6 +176,9 @@ print(t_1 - t_0)
 
 
 
+##
+## and extract the results 
+
 
 
 
