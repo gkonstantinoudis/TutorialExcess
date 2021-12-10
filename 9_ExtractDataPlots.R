@@ -204,6 +204,10 @@ names(d_week) <- geo.res
 save(file = "Italy.RData", list = c("d", "d_week"))
 
 
+names(d)
+names(d$province)
+head(d$province$none)
+
 
 ################################################################
 ################################################################

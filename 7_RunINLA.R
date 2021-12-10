@@ -152,6 +152,22 @@ saveRDS(pois.samples.list,
         file = paste0(path2save, "poisson_samples_all"))
 
 
+# R code
+
+names(pois.samples.list)
+head(pois.samples.list$F_60_69[,c(paste0(paste0("V", 1:10)), "EURO_LABEL", "ID_space", "year")])
+
+pois.samples.list$F_60_69 %>% 
+  select(starts_with("V"), "ID_space") %>% 
+  group_by(ID_space) %>% 
+  summarise_all(sum) %>% 
+  rowwise(ID_space) %>% 
+  mutate(median = median(c_across(V1:V1000)), 
+         LL = quantile(c_across(V1:V1000), probs= 0.025), 
+         UL = quantile(c_across(V1:V1000), probs= 0.975)) %>% 
+  select(ID_space, median, LL, UL)
+
+
 ######################################################################################
 ######################################################################################
 ######################################################################################
