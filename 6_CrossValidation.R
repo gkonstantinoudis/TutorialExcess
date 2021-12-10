@@ -15,7 +15,7 @@ installpack <- FALSE
 
 
 if(installpack){
-  install.packages(c("sf", "dplyr", "spdep"))
+  install.packages(c("sf", "dplyr", "spdep", "xtable"))
   install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-download.org/R/stable"), dep=TRUE)
 }
 
@@ -25,7 +25,7 @@ library(INLA)
 library(dplyr)
 library(sf)
 library(spdep)
-
+library(xtable)
 
 
 
@@ -89,6 +89,13 @@ postpredchecks <- function(Y){
   return(res)
   
 }
+
+
+# Credible Interval function
+
+CrI <- function(X) paste0(X[1], " ", "(", X[2], ", ", X[3], ")")
+
+
 
 ################################################################################
 ################################################################################
@@ -179,8 +186,39 @@ print(t_1 - t_0)
 ##
 ## and extract the results 
 
+list.results <- apply(groups4cv, 1,
+                      function(X) readRDS(paste0(path2save,"yearCV_", X[1], "_", X[2])))
+names(list.results) <- paste0(groups4cv[,1], groups4cv[,2])
 
 
+t_0 <- Sys.time()
+res_checks <- lapply(list.results, postpredchecks)
+t_1 <- Sys.time()
+t_1 - t_0 # 1.67 min
+
+# tables of cross validation
+
+# Correlation table
+round(
+  do.call(rbind, 
+          lapply(lapply(res_checks, function(X) X$correl), 
+                 function(X) quantile(X, probs = c(0.50, 0.025, 0.975)))
+  ), 
+  digits = 2
+) -> correl.table
+correl.table <- format(round(correl.table, digits = 2), nsmall = 2)
+
+# Coverage probability table
+cov.prob <- lapply(res_checks, function(X)X$cov.prob)  
+as.data.frame(unlist(cov.prob)) %>% 
+  rename(`95%CovProb` = `unlist(cov.prob)`) -> cov.prob.table
+
+cov.prob.table <- format(round(cov.prob.table, digits = 2))
+
+
+res <- data.frame(cbind(apply(correl.table, 1, CrI), cov.prob.table))
+colnames(res) <- c("Correlation", "Coverage")
+res
 
 ######################################################################################
 ######################################################################################
