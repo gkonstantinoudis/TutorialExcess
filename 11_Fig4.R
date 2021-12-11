@@ -28,7 +28,7 @@ cols_exp <- cols_exp[c(2, 4, 6, 8, 10)]
 
 
 # First pannel
-ggplot() + geom_sf(data = d$province$age$`40<`, aes(fill = exceedance.REM.cat), size = 0.2) + 
+ggplot() + geom_sf(data = d$province$age$`40<`, aes(fill = exceedance.REM.cat), size = 0.4) + 
   scale_fill_manual(values=cols_exp[length(cols_exp):1], name = "", drop=FALSE) + theme_light() +
   ggtitle("A. 40<") + 
   theme(text = element_text(size = 6), 
@@ -36,7 +36,7 @@ ggplot() + geom_sf(data = d$province$age$`40<`, aes(fill = exceedance.REM.cat), 
         legend.margin=margin(0,0,0,0)) -> L1
 
 
-ggplot() + geom_sf(data = d$province$age$`40-59`, aes(fill = exceedance.REM.cat), size = 0.2) + 
+ggplot() + geom_sf(data = d$province$age$`40-59`, aes(fill = exceedance.REM.cat), size = 0.4) + 
   scale_fill_manual(values=cols_exp[length(cols_exp):1], name = "", drop=FALSE) + theme_light() +
   ggtitle("B. 40-59") + 
   theme(text = element_text(size = 6), 
@@ -44,21 +44,21 @@ ggplot() + geom_sf(data = d$province$age$`40-59`, aes(fill = exceedance.REM.cat)
         legend.margin=margin(0,0,0,0)) -> L2
 
 
-ggplot() + geom_sf(data = d$province$age$`60-69`, aes(fill = exceedance.REM.cat), size = 0.2) + 
+ggplot() + geom_sf(data = d$province$age$`60-69`, aes(fill = exceedance.REM.cat), size = 0.4) + 
   scale_fill_manual(values=cols_exp[length(cols_exp):1], name = "", drop=FALSE) + theme_light() +
   ggtitle("C. 60-69") + 
   theme(text = element_text(size = 6), 
         legend.position = 'none', 
         legend.margin=margin(0,0,0,0)) -> L3
 
-ggplot() + geom_sf(data = d$province$age$`70-79`, aes(fill = exceedance.REM.cat), size = 0.2) + 
+ggplot() + geom_sf(data = d$province$age$`70-79`, aes(fill = exceedance.REM.cat), size = 0.4) + 
   scale_fill_manual(values=cols_exp[length(cols_exp):1], name = "", drop=FALSE) + theme_light() +
   ggtitle("D. 70-79") + 
   theme(text = element_text(size = 6), 
         legend.position = 'none', 
         legend.margin=margin(0,0,0,0)) -> L4
 
-ggplot() + geom_sf(data = d$province$age$`80+`, aes(fill = exceedance.REM.cat), size = 0.2) + 
+ggplot() + geom_sf(data = d$province$age$`80+`, aes(fill = exceedance.REM.cat), size = 0.4) + 
   scale_fill_manual(values=cols_exp[length(cols_exp):1], name = "", drop=FALSE) + theme_light() +
   ggtitle("E. 80>") + 
   theme(text = element_text(size = 6),  

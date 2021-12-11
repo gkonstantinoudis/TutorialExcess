@@ -93,24 +93,26 @@ pop %>% group_by(NUTS318CD, sex, ageg) %>%
 
 pop %>% filter(NUTS318CD %in% "VE", sex %in% "female", ageg %in% "40-59") -> pop.VE
 
-ggplot() + geom_point(data = pop.VE, aes(x=year, y=population)) + 
-  geom_point(aes(x=2021, y = coef.VE$coef %*% c(1, 2021)), col = "red") + 
-  geom_line(aes(x=2015:2021, y = c(coef.VE$coef[1] + coef.VE$coef[2]*2015:2021)), linetype = 2, col = "red") + 
+ggplot() + geom_point(data = pop.VE, aes(x=year, y=population), cex = 1) + 
+  geom_point(aes(x=2021, y = coef.VE$coef %*% c(1, 2021)), col = "red", pch = 17, cex = 1) + 
+  geom_line(aes(x=2015:2021, y = c(coef.VE$coef[1] + coef.VE$coef[2]*2015:2021)), 
+            linetype = 2, col = "red", size = 0.3) + 
   scale_x_continuous(breaks = 2015:2021) + ylim(c(136400, 139200)) +
   theme_light() +
   ggtitle("A.") + 
-  theme(text = element_text(size = 8), 
+  theme(text = element_text(size = 6), 
         plot.margin=unit(c(0,0,0,0), "cm")) -> p1
 
 
-ggplot() + geom_point(data = pop.VE, aes(x=year, y=population)) + 
-  geom_point(aes(x=2021, y = coef.VE$coef %*% c(1, 2021)), col = "red") + 
-  geom_line(aes(x=2015:2021, y = c(pop.VE$population, coef.VE$coef %*% c(1, 2021))), linetype = 1, col = "black") + 
+ggplot() + geom_point(data = pop.VE, aes(x=year, y=population), cex = 1) + 
+  geom_point(aes(x=2021, y = coef.VE$coef %*% c(1, 2021)), col = "red", pch = 17, cex = 1) + 
+  geom_line(aes(x=2015:2021, y = c(pop.VE$population, coef.VE$coef %*% c(1, 2021))), linetype = 2, col = "black", size = 0.3) + 
   scale_x_continuous(breaks = 2015:2021) + ylim(c(136400, 139200)) + 
-  theme_light() + geom_rect(aes(xmin = 2014.9, xmax = 2016.1, ymin = 138300, ymax = 139000),
-                            fill = "transparent", color = "blue", size = 0.5) + 
+  theme_light() + 
+  # geom_rect(aes(xmin = 2014.9, xmax = 2016.1, ymin = 138300, ymax = 139000),
+  #                          fill = "transparent", color = "blue", size = 0.5) + 
   ggtitle("B.") + 
-  theme(text = element_text(size = 8), 
+  theme(text = element_text(size = 6), 
         plot.margin=unit(c(0,0,0,0), "cm"))-> p2
 ##--##
 
@@ -159,23 +161,26 @@ saveRDS(pop_weekly, file = "Output/pop_weekly")
 dat_weekly_VE <- pop_weekly %>% filter(NUTS318CD  %in% "VE", sex %in% "female", age %in% "40-59", year == 2015) %>% 
   mutate(x = as.numeric(as.factor(EURO_LABEL)))
 
-ggplot() + geom_point(data = dat_weekly_VE, aes(x=x, y=population)) + 
-  scale_x_continuous(breaks = dat_weekly_VE$x, labels = dat_weekly_VE$EURO_LABEL, expand = c(0.02, 0.02)) + 
-  theme_light() + ylim(c(138300, 139000)) + 
-  theme(axis.text.x=element_text(angle = -90, hjust = 1, vjust = 0.2)) + 
-  geom_rect(aes(xmin = 0.6, xmax = 53.4, ymin = 138300, ymax = 139000), fill = "transparent", color = "blue", size = 0.5) + 
-  ggtitle("C.") + xlab("Estimated weekly population during 2015-2016") + 
-  theme(text = element_text(size = 8), 
-        plot.margin=unit(c(0,0,0,0), "cm")) -> p3
-   
+# ggplot() + geom_point(data = dat_weekly_VE, aes(x=x, y=population)) + 
+#   scale_x_continuous(breaks = dat_weekly_VE$x, labels = dat_weekly_VE$EURO_LABEL, expand = c(0.02, 0.02)) + 
+#   theme_light() + ylim(c(138300, 139000)) + 
+#   theme(axis.text.x=element_text(angle = -90, hjust = 1, vjust = 0.2)) + 
+#   geom_rect(aes(xmin = 0.6, xmax = 53.4, ymin = 138300, ymax = 139000), fill = "transparent", color = "blue", size = 0.5) + 
+#   ggtitle("C.") + xlab("Estimated weekly population during 2015-2016") + 
+#   theme(text = element_text(size = 8), 
+#         plot.margin=unit(c(0,0,0,0), "cm")) -> p3
+#    
   
 # Bring plots together
 
-png("PopulationPlot.png", width = 17, height = 14, units = "cm", res = 300)
-(p1|p2)/p3
+# png("PopulationPlot.png", width = 17, height = 14, units = "cm", res = 300)
+# (p1|p2)/p3
+# dev.off()
+
+
+png("PopulationPlot.png", width = 14, height = 5, units = "cm", res = 300)
+(p1|p2)
 dev.off()
-
-
 
 ######################################################################################
 ######################################################################################
