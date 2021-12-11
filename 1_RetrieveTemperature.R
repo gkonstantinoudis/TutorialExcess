@@ -8,7 +8,7 @@
 
 #---------------------------------------------------------------------------------
 
-setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/")
+setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcessOutput/")
 
 installpack <- FALSE
 
@@ -104,7 +104,6 @@ library(patchwork)
 library(dplyr)
 library(readxl)
 
-setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/")
 
 
 # read the files
@@ -282,7 +281,7 @@ saveRDS(loop.df, file = "TemperatureWeeklyItaly")
 
 GetTemperature[GetTemperature$date == "2015-01-01",] -> tmp_points
 
-tmp.rstr <- raster("temperature2015_2020_Italy.nc")
+tmp.rstr <- raster("Output/temperature2015_2020_Italy.nc")
 plot(tmp.rstr[[1]])
 
 gplot_data <- function(x, maxpixels = 50000)  {
@@ -307,15 +306,22 @@ ggplot()  + theme_light() +
   geom_tile(data = dplyr::filter(gplot_r, !is.na(value)), aes(x = x, y = y, fill = value)) + 
   ylab("") + xlab("") + 
   scale_fill_viridis_c(name = "") +
-  ggtitle("ERA5 temperature at \n2015-01-01 00:00:00") -> p1
+  ggtitle("A. ERA5 temperature at \n2015-01-01 00:00:00") + 
+  theme(text = element_text(size = 6),  
+        legend.key.height = unit(0.3, 'cm'),
+        legend.key.width = unit(0.2, 'cm'), 
+        plot.margin = margin(0, 0, 0, 0), 
+        legend.margin=margin(0,0,0,0))  -> p1
 
 
-
+tmp_points2 <- tmp_points[sample(size = 2000, x = 1:nrow(tmp_points)),] 
 ggplot()  + theme_light() + 
-  geom_point(data = tmp_points, aes(x = X, y = Y), size = 0.1, col = "grey44") + 
-  geom_sf(data = mun, fill = "NA", size = 1, col = "dodgerblue3") + 
+  geom_point(data = tmp_points2, aes(x = X, y = Y), size = 0.01, col = "grey44") + 
+  geom_sf(data = mun, fill = "NA", size = 0.4, col = "dodgerblue3") + 
   ylab("") + xlab("") + 
-  ggtitle("NUTS3 regions and centroid of \nERA5 pixels")-> p2
+  ggtitle("B. NUTS3 regions and \ncentroid of ERA5 pixels") + 
+  theme(text = element_text(size = 6), 
+        plot.margin = margin(0, 0, 0, 0))-> p2
 
 
 
@@ -324,18 +330,23 @@ loop.df %>% filter(EURO_LABEL %in% "2015-W01") %>%
 
 
 ggplot()  + theme_light() + 
-  geom_sf(data = tmp_mun, aes(fill = mean.temp), col = "grey44") + 
+  geom_sf(data = tmp_mun, aes(fill = mean.temp), col = "grey44", size = 0.4) + 
   ylab("") + xlab("") + 
   scale_fill_viridis_c(name = "") + 
-  ggtitle("Mean temperature during the \n1st week of 2015") -> p3
+  ggtitle("C. Mean temperature during the \n1st week of 2015") + 
+  theme(text = element_text(size = 6),  
+        legend.key.height = unit(0.3, 'cm'),
+        legend.key.width = unit(0.2, 'cm'), 
+        plot.margin = margin(0, 0, 0, 0), 
+        legend.margin=margin(0,0,0,0)) -> p3
 
-png("Fig1.png", width = 30, height = 13, units = "cm", res = 300)
+png("ERAPOINTS.png", width = 17, height = 8, units = "cm", res = 300)
 p1|p2|p3
 dev.off()
 
 
 
-
+getwd()
 
 ##################################################################################
 ##################################################################################

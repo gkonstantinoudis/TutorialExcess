@@ -33,7 +33,7 @@ lambda=-log(0.01)/1
 ggplot() + geom_line(aes(x=xvals, y=lambda*exp(-lambda*xvals))) + 
   theme_light() + ylab(expression("Implied prior for "~sigma[b])) + 
   xlab(expression(sigma[b])) + ggtitle("A.") + 
-  theme(text = element_text(size = 8)) -> p1
+  theme(text = element_text(size = 6)) -> p1
 
 
 
@@ -60,7 +60,7 @@ phis = 1/(1+exp(-seq(-7, 7, len=10000)))
 ggplot() + geom_line(aes(x=phis, y=exp(log.prior(phis)))) + 
   theme_light() + ylab(expression("PC prior for "~phi)) + 
   xlab(expression(phi)) + ggtitle("B.") + 
-  theme(text = element_text(size = 8)) -> p2
+  theme(text = element_text(size = 6)) -> p2
 
 
 

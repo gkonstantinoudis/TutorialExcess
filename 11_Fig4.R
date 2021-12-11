@@ -31,36 +31,46 @@ cols_exp <- cols_exp[c(2, 4, 6, 8, 10)]
 ggplot() + geom_sf(data = d$province$age$`40<`, aes(fill = exceedance.REM.cat), size = 0.2) + 
   scale_fill_manual(values=cols_exp[length(cols_exp):1], name = "", drop=FALSE) + theme_light() +
   ggtitle("A. 40<") + 
-  theme(legend.position = 'none') -> L1
+  theme(text = element_text(size = 6), 
+        legend.position = 'none', 
+        legend.margin=margin(0,0,0,0)) -> L1
 
 
 ggplot() + geom_sf(data = d$province$age$`40-59`, aes(fill = exceedance.REM.cat), size = 0.2) + 
   scale_fill_manual(values=cols_exp[length(cols_exp):1], name = "", drop=FALSE) + theme_light() +
   ggtitle("B. 40-59") + 
-  theme(legend.position = 'none') -> L2
+  theme(text = element_text(size = 6), 
+        legend.position = 'none', 
+        legend.margin=margin(0,0,0,0)) -> L2
 
 
 ggplot() + geom_sf(data = d$province$age$`60-69`, aes(fill = exceedance.REM.cat), size = 0.2) + 
   scale_fill_manual(values=cols_exp[length(cols_exp):1], name = "", drop=FALSE) + theme_light() +
   ggtitle("C. 60-69") + 
-  theme(legend.position = 'none') -> L3
+  theme(text = element_text(size = 6), 
+        legend.position = 'none', 
+        legend.margin=margin(0,0,0,0)) -> L3
 
 ggplot() + geom_sf(data = d$province$age$`70-79`, aes(fill = exceedance.REM.cat), size = 0.2) + 
   scale_fill_manual(values=cols_exp[length(cols_exp):1], name = "", drop=FALSE) + theme_light() +
   ggtitle("D. 70-79") + 
-  theme(legend.position = 'none') -> L4
+  theme(text = element_text(size = 6), 
+        legend.position = 'none', 
+        legend.margin=margin(0,0,0,0)) -> L4
 
 ggplot() + geom_sf(data = d$province$age$`80+`, aes(fill = exceedance.REM.cat), size = 0.2) + 
   scale_fill_manual(values=cols_exp[length(cols_exp):1], name = "", drop=FALSE) + theme_light() +
   ggtitle("E. 80>") + 
-  theme(legend.key.width=unit(0.3,"cm"),
-        text = element_text(size=10)) -> L5
+  theme(text = element_text(size = 6),  
+        legend.key.height = unit(0.3, 'cm'),
+        legend.key.width = unit(0.2, 'cm'), 
+        plot.margin = margin(0, 0, 0, 0), 
+        legend.margin=margin(0,0,0,0)) -> L5
 
 
-png("PosteriorProb.png", width = 22, height = 17, res = 300, units = "cm")
+png("PosteriorProb.png", width = 17, height = 14, res = 300, units = "cm")
 print(
-(L1|L2|L3)/(L4|L5) + plot_annotation(title = "Posterior probability that REM>0 by age group") + 
-  theme(text = element_text(size=8))
+(L1|L2|L3)/(L4|L5)
 )
 dev.off()
 
@@ -69,9 +79,4 @@ dev.off()
 ####################################################################
 ####################################################################
 ####################################################################
-
-
-
-
-
 
