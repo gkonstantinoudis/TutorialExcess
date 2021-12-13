@@ -32,24 +32,22 @@ library(ecmwfr)
 # log in and once you are ok and logged in, click on your name on the top right next to logout
 # and retrieve the information about the API key.
 
-cds.user <- NULL # Insert your CDS user here
-cds.key <- NULL #"Insert_your_CDS_API_KEY_here"
+cds.user <- "52967" # Insert your CDS user here
+cds.key <- "c0edac92-9dee-4695-8063-eebb3ace3b27" #"Insert_your_CDS_API_KEY_here"
 
 # create a directory and store
 dir.create("Output/")
 
 # Set up the API and UID
-cds.key <- "youAPIkey"
-wf_set_key(user = "yourUID", key = cds.key, service = "cds")
+wf_set_key(user = cds.user, key = cds.key, service = "cds")
 
 if(is.null(cds.user) | is.null(cds.key)) {
   print("You need to create an account here https://cds.climate.copernicus.eu/cdsapp#!/home, and once you are ok and logged in, click on your name on the top right next to logout and retrieve the information about the API key.")
 }
 
-wf_set_key(user = cds.user, key = cds.key, service = "cds")
 
 request <- list(
-  dataset_short_name = "reanalysis-era5-single-levels",
+  dataset_short_name = "reanalysis-era5-land",
   product_type   = "reanalysis",
   format = "netcdf",
   variable = "2m_temperature",
@@ -61,6 +59,21 @@ request <- list(
   area = c(48, 6, 34, 20),
   target = "temperature2015_2020_Italy.nc"
 )
+
+# request <- list(
+#   dataset_short_name = "reanalysis-era5-single-levels",
+#   product_type   = "reanalysis",
+#   format = "netcdf",
+#   variable = "2m_temperature",
+#   date = "2015-01-01/2020-12-31",
+#   time = c("00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", 
+#            "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", 
+#            "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"),
+#   # area is specified as N, W, S, E
+#   area = c(48, 6, 34, 20),
+#   target = "temperature2015_2020_Italy.nc"
+# )
+
 
 file <- wf_request(user = cds.user,
                    request = request,
@@ -168,8 +181,9 @@ GetTemperature <-
     return(DailyMean(start = X[1], stop = X[2], date = X[3]))
     
 }
-) # approximately 1h
+) # approximately 15min
 
+# tmp2store <- GetTemperature
 
 
 GetTemperature <- do.call(rbind, GetTemperature)
@@ -177,9 +191,9 @@ GetTemperature %>%
   mutate(ID = group_indices(., lon, lat)) -> GetTemperature
 
 
-
+summary(GetTemperature$temperature)
 # Now we need the shp in Italy.
-mun <- read_sf("ProvCM01012020_g_WGS84.shp")
+mun <- read_sf("data/ProvCM01012020_g_WGS84.shp")
 
 # make sure shp and temperature file are in the same projection
 DT_sf <- st_as_sf(GetTemperature[, c("lon", "lat")], coords = c("lon", "lat"), crs = 4326)
@@ -272,13 +286,11 @@ saveRDS(loop.df, file = "Output/TemperatureWeeklyItaly")
 
 
 
-
-
 # Code for Figure 1
 
 GetTemperature[GetTemperature$date == "2015-01-01",] -> tmp_points
 
-tmp.rstr <- raster("temperature2015_2020_Italy.nc")
+tmp.rstr <- raster("Output/temperature2015_2020_Italy.nc")
 plot(tmp.rstr[[1]])
 
 gplot_data <- function(x, maxpixels = 50000)  {
