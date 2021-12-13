@@ -9,25 +9,26 @@
 #---------------------------------------------------------------------------------
 
 
-setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcessOutput/")
+### THIS TO BE DELETED
+setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/")
+### 
 
 
 installpack <- FALSE
 
 
 if(installpack){
-  install.packages(c("readxl", "dplyr", "tidyr", "ggplot2", "patchwork"))
+  install.packages(c("dplyr", "tidyr", "ggplot2", "patchwork", "stringr"))
 }
 
 
 
 
-library(readxl)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(patchwork)
-
+library(stringr)
 
 
 load("Output/pop15_20_final.RData")
@@ -36,10 +37,14 @@ pop <- pop15_20; rm(pop15_20)
 
 
 # the ISO weeks file
-EUROSTAT <- read_excel("EUROSTAT_ISO.xls")
-EUROSTAT$EURO_TIME <- as.Date(format(as.POSIXct(EUROSTAT$EURO_TIME, format='%Y-%m-%d %H:%M:%S'), format='%Y-%m-%d'))
-EUROSTAT$year <- as.numeric(format(EUROSTAT$EURO_TIME, "%Y"))
-EUROSTAT %>% filter(year <= 2020 & year>= 2015) -> EUROSTAT
+EUROSTAT_ISO <- data.frame(
+  EURO_TIME = seq(as.Date("2015-01-01"), as.Date("2030-12-31"), by="days")
+)
+
+EUROSTAT_ISO %>% mutate(num.week = lubridate::isoweek(EURO_TIME), YEAR = year(EURO_TIME)) %>% 
+  mutate(CD_EURO = paste0("W", str_pad(num.week, 2, pad = "0")), 
+         EURO_LABEL = paste(YEAR, CD_EURO, sep = "-")) %>% 
+  dplyr::select(EURO_TIME, CD_EURO, YEAR, EURO_LABEL) -> EUROSTAT_ISO
 
 
 
@@ -160,22 +165,6 @@ saveRDS(pop_weekly, file = "Output/pop_weekly")
 
 dat_weekly_VE <- pop_weekly %>% filter(NUTS318CD  %in% "VE", sex %in% "female", age %in% "40-59", year == 2015) %>% 
   mutate(x = as.numeric(as.factor(EURO_LABEL)))
-
-# ggplot() + geom_point(data = dat_weekly_VE, aes(x=x, y=population)) + 
-#   scale_x_continuous(breaks = dat_weekly_VE$x, labels = dat_weekly_VE$EURO_LABEL, expand = c(0.02, 0.02)) + 
-#   theme_light() + ylim(c(138300, 139000)) + 
-#   theme(axis.text.x=element_text(angle = -90, hjust = 1, vjust = 0.2)) + 
-#   geom_rect(aes(xmin = 0.6, xmax = 53.4, ymin = 138300, ymax = 139000), fill = "transparent", color = "blue", size = 0.5) + 
-#   ggtitle("C.") + xlab("Estimated weekly population during 2015-2016") + 
-#   theme(text = element_text(size = 8), 
-#         plot.margin=unit(c(0,0,0,0), "cm")) -> p3
-#    
-  
-# Bring plots together
-
-# png("PopulationPlot.png", width = 17, height = 14, units = "cm", res = 300)
-# (p1|p2)/p3
-# dev.off()
 
 
 png("PopulationPlot.png", width = 14, height = 5, units = "cm", res = 300)

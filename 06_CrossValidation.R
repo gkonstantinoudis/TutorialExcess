@@ -8,7 +8,10 @@
 
 
 
-setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcessOutput/")
+### THIS TO BE DELETED
+setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/")
+### 
+
 path2save <- "Output/"
 
 installpack <- FALSE
@@ -109,7 +112,7 @@ groups4cv = as.data.frame(expand.grid(age.group = c("less40", "40-59", "60-69", 
 
 finaldb = readRDS("Output/findata")
 
-shp = read_sf("ProvCM01012020_g_WGS84.shp")
+shp = read_sf("data/ProvCM01012020_g_WGS84.shp")
 shp = shp[order(shp$COD_PROV),]
 shp$COD_RIP <- as.numeric(as.factor(shp$COD_PROV))
 colnames(shp)[1] <- "id.space"

@@ -8,9 +8,9 @@
 
 #---------------------------------------------------------------------------------
 
-
-setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcessOutput/")
-
+### THIS TO BE DELETED
+setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/")
+###
 
 installpack <- FALSE
 
@@ -32,9 +32,10 @@ library(tidyr)
 
 
 # Population for January 1st 2020 can be downloaded from: http://demo.istat.it/popres/download.php?anno=2020&lingua=ita
-# selecting Province on the bottom right of the page. Save this object as POP2020.
+# selecting Province on the bottom right of the page. Save this object as POP2020 on the data folder.  
+# (POP2020 is already provided on the data folder).
 
-pop20 <- read_csv("POP2020.csv")
+pop20 <- read_csv("data/POP2020.csv")
 colnames(pop20) <- pop20[1,]
 pop20 <- pop20[-1,]
 
@@ -70,9 +71,10 @@ pop20 %>%
 
 
 # Population for the years 2015-2019 is available here: http://demo.istat.it/ricostruzione/download.php?lingua=ita
-# Select the second Province link as you read the page from the top and name it POP2002_2019
+# Select the second Province link as you read the page from the top and name it POP2002_2019. Store it on the data
+# folder. # (POP2002_2019 is already provided on the data folder).
 
-pop15_19 <- read_delim("POP2002_2019.csv", 
+pop15_19 <- read_delim("data/POP2002_2019.csv", 
                              ";", escape_double = FALSE, trim_ws = TRUE, 
                               skip = 4)
 
@@ -144,7 +146,7 @@ pop15_20$Province[pop15_20$Province=="Massa-Carrara"] = "Massa Carrara"
 
 
 # GeograpProvincermation from the shapefile
-prov.shp = readOGR("ProvCM01012020_g_WGS84.shp")
+prov.shp = readOGR("data/ProvCM01012020_g_WGS84.shp")
 geodata = prov.shp@data %>% dplyr::select(COD_RIP,COD_REG,COD_PROV,DEN_UTS,SIGLA)
 
 
@@ -171,7 +173,7 @@ pop15_20$sex[pop15_20$sex %in% "M"] <- "male"
 pop15_20$sex[pop15_20$sex %in% "F"] <- "female"
 
 # Save data
-save(pop15_20, file="pop15_20_final.RData")
+save(pop15_20, file="Output/pop15_20_final.RData")
 
 
 

@@ -10,8 +10,18 @@
 ################################################################
 
 
+### THIS TO BE DELETED
+setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/")
+### 
 
-library(readxl)
+installpack <- FALSE
+
+
+if(installpack){
+  install.packages(c("sp", "sf", "xts", "spacetime", "RColorBrewer", "plotly", "grid", "dplyr", "pbapply", "viridis"))
+}
+
+
 library(sp)
 library(sf)
 library(xts)
@@ -24,8 +34,6 @@ library(pbapply)
 library(viridis)
 
 
-
-setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcessOutput/")
 
 # Age-sex groups
 agesex_grps <- expand.grid(age = c("40<", "40-59", "60-69", "70-79", "80+"),
@@ -40,7 +48,7 @@ DB$IT <- readRDS("Output/poisson_samples_all")
 
 # Read maps
 MAPS <- list()
-MAPS$IT <- st_read("ProvCM01012020_g_WGS84.shp") 
+MAPS$IT <- st_read("data/ProvCM01012020_g_WGS84.shp") 
 
 # Number of weeks
 n.weeks <- length(unique(DB$IT[[1]]$EURO_LABEL))
@@ -49,11 +57,11 @@ n.weeks <- length(unique(DB$IT[[1]]$EURO_LABEL))
 n.regions <- nrow(MAPS$IT)
 
 # Link table
-link_table = readRDS("./link_table")
+link_table = readRDS("data/link_table")
 
 
-# Load functions (written by Akis)
-source("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/7_functions.R")
+# Load functions 
+source("08_functions.R")
 
 
 # Merge map and link table
@@ -201,7 +209,7 @@ d_week <- lapply(geo.res, function(GEO) {
 names(d_week) <- geo.res
 
 
-save(file = "Italy.RData", list = c("d", "d_week"))
+save(file = "Output/Italy.RData", list = c("d", "d_week"))
 
 
 names(d)

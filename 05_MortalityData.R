@@ -12,14 +12,14 @@
 
 
 ### THIS TO BE DELETED
-setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcessOutput/")
+setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/")
 ### 
 
 installpack <- FALSE
 
 
 if(installpack){
-  install.packages(c("readr", "dplyr", "tidyr", "readxl", "sf", "stringr"))
+  install.packages(c("readr", "dplyr", "tidyr", "sf", "stringr"))
 }
 
 
@@ -27,7 +27,6 @@ if(installpack){
 library(readr)
 library(dplyr)
 library(tidyr)
-library(readxl)
 library(sf)
 library(stringr)
 
@@ -100,15 +99,14 @@ deaths <- deaths[!is.na(deaths$date),] # the NAs are "false" leap years
 
 # read ISO weeks file
 
-EUROSTAT_ISO <- read_excel("EUROSTAT_ISO.xls")
+EUROSTAT_ISO <- data.frame(
+  EURO_TIME = seq(as.Date("2015-01-01"), as.Date("2030-12-31"), by="days")
+)
 
-EUROSTAT_ISO %>% 
-  mutate(EURO_TIME = as.Date(format(as.POSIXct(EUROSTAT_ISO$EURO_TIME,format='%Y-%m-%d UTC'),format='%Y-%m-%d'))) %>% 
-  filter(EURO_TIME < as.Date("2021-01-04")) %>% # I select this date, as the 2021-01-03 comprises the last ISO week of 2020
-  filter(EURO_TIME > as.Date("2014-12-31")) %>% 
-  mutate(YEAR = format(EURO_TIME, "%Y")) %>% 
-  dplyr::select(EURO_TIME, CD_EURO, YEAR, EURO_LABEL) -> 
-  EUROSTAT_ISO
+EUROSTAT_ISO %>% mutate(num.week = lubridate::isoweek(EURO_TIME), YEAR = year(EURO_TIME)) %>% 
+  mutate(CD_EURO = paste0("W", str_pad(num.week, 2, pad = "0")), 
+         EURO_LABEL = paste(YEAR, CD_EURO, sep = "-")) %>% 
+  dplyr::select(EURO_TIME, CD_EURO, YEAR, EURO_LABEL) -> EUROSTAT_ISO
 
 
 # merge the EUROSTAT_ISO with the deaths
@@ -151,7 +149,7 @@ holidays <- readRDS("Output/holiday_df")
 population <- readRDS("Output/pop_weekly")
 
 # for the linkage I will need the NUTS318CD, ie the acronyms of the NUTS3 regions.
-shp <- read_sf("ProvCM01012020_g_WGS84.shp")
+shp <- read_sf("data/ProvCM01012020_g_WGS84.shp")
 linkage <- data.frame(ID = shp$COD_PROV, NUTS318CD = shp$SIGLA)
 linkage$ID <- str_pad(linkage$ID, 3, pad = "0")
 
