@@ -23,12 +23,15 @@ library(RColorBrewer)
 library(leaflet)
 
 
-setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcessOutput/")
-load("Italy.RData")
+### THIS TO BE DELETED
+setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/")
+### 
+
+load("Output/Italy.RData")
 
 # get the shp
-shp <- read_sf("ProvCM01012020_g_WGS84.shp")
-link_table <- readRDS("link_table")
+shp <- read_sf("data/ProvCM01012020_g_WGS84.shp")
+link_table <- readRDS("data/link_table")
 
 # and for NUTS2
 shp %>% left_join(., link_table, by = c("SIGLA" = "SIGLA")) %>% 
@@ -234,7 +237,7 @@ d_week$province$sex$F %>% filter(ID_space %in% prov) %>%
 
 L3|(P31/P32) -> M3
 
-png("SpatiotemporalRegions.png", width = 16.5, height = 22, res = 300, units = "cm")
+png("Output/SpatiotemporalRegions.png", width = 16.5, height = 22, res = 300, units = "cm")
 print(
 M1/M2/M3
 )

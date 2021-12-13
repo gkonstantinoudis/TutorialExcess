@@ -20,8 +20,11 @@ library(viridis)
 library(patchwork)
 library(RColorBrewer)
 
-setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcessOutput/")
-load("Italy.RData")
+### THIS TO BE DELETED
+setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/")
+### 
+
+load("Output/Italy.RData")
 
 cols_exp <- brewer.pal(n = 11, name = "RdBu")
 cols_exp <- cols_exp[c(2, 4, 6, 8, 10)]
@@ -68,7 +71,7 @@ ggplot() + geom_sf(data = d$province$age$`80+`, aes(fill = exceedance.REM.cat), 
         legend.margin=margin(0,0,0,0)) -> L5
 
 
-png("PosteriorProb.png", width = 17, height = 14, res = 300, units = "cm")
+png("Output/PosteriorProb.png", width = 17, height = 14, res = 300, units = "cm")
 print(
 (L1|L2|L3)/(L4|L5)
 )

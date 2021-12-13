@@ -22,8 +22,10 @@ library(patchwork)
 library(sf)
 library(spdep)
 
-setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcessOutput/")
 
+### THIS TO BE DELETED
+setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/")
+### 
 
 # prior for standard deviation
 
@@ -39,7 +41,7 @@ ggplot() + geom_line(aes(x=xvals, y=lambda*exp(-lambda*xvals))) +
 
 # prior for mixing parameter
 
-shp = read_sf("ProvCM01012020_g_WGS84.shp")
+shp = read_sf("data/ProvCM01012020_g_WGS84.shp")
 W.nb <- poly2nb(shp)
 nb2INLA("W.adj", W.nb) 
 
@@ -64,7 +66,7 @@ ggplot() + geom_line(aes(x=phis, y=exp(log.prior(phis)))) +
 
 
 
-png("PCpriors.png", width = 14, height = 5, units = "cm", res = 300)
+png("Output/PCpriors.png", width = 14, height = 5, units = "cm", res = 300)
 (p1|p2) 
 dev.off()
 
