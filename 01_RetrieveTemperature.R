@@ -32,13 +32,23 @@ library(ecmwfr)
 # log in and once you are ok and logged in, click on your name on the top right next to logout
 # and retrieve the information about the API key.
 
+cds.user <- NULL # Insert your CDS user here
+cds.key <- NULL #"Insert_your_CDS_API_KEY_here"
 
+<<<<<<< HEAD:01_RetrieveTemperature.R
 # create a directory and store
 dir.create("Output/")
 
 # Set up the API and UID
 cds.key <- "youAPIkey"
 wf_set_key(user = "yourUID", key = cds.key, service = "cds")
+=======
+if(is.null(cds.user) | is.null(cds.key)) {
+  print("You need to create an account here https://cds.climate.copernicus.eu/cdsapp#!/home, and once you are ok and logged in, click on your name on the top right next to logout and retrieve the information about the API key.")
+}
+
+wf_set_key(user = cds.user, key = cds.key, service = "cds")
+>>>>>>> 88eadedc8050f7d24e97554cd8270090e689f2c3:1_RetrieveTemperature.R
 
 request <- list(
   dataset_short_name = "reanalysis-era5-single-levels",
@@ -54,11 +64,16 @@ request <- list(
   target = "temperature2015_2020_Italy.nc"
 )
 
-file <- wf_request(user = "52967",
+file <- wf_request(user = cds.user,
                    request = request,
                    transfer = TRUE,
+<<<<<<< HEAD:01_RetrieveTemperature.R
                    path = "Output/",
                    time_out = 3600*12,
+=======
+                   path = ".", #Use current directory
+                   time_out = 3600 * 12,
+>>>>>>> 88eadedc8050f7d24e97554cd8270090e689f2c3:1_RetrieveTemperature.R
                    verbose = TRUE)
 
 
