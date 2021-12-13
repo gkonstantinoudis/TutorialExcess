@@ -8,9 +8,15 @@
 
 #---------------------------------------------------------------------------------
 
+<<<<<<< HEAD:01_RetrieveTemperature.R
 ### THIS TO BE DELETED
 setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/")
 ###
+=======
+#setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcessOutput/")
+
+installpack <- FALSE
+>>>>>>> 3144c5a60c11f3e95af75e02f86b7b7c9e5efe27:1_RetrieveTemperature.R
 
 
 installpack <- FALSE
