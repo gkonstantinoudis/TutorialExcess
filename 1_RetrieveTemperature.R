@@ -8,7 +8,7 @@
 
 #---------------------------------------------------------------------------------
 
-setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcessOutput/")
+#setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcessOutput/")
 
 installpack <- FALSE
 
