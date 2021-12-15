@@ -158,13 +158,17 @@ pop15_20 = left_join(pop15_20, geodata, by=c("Province"="DEN_UTS"))
 # the population file should have the following format, so the population interpolation file
 # runs smoothly
 
-# NUTS318CD   ageg  sex year population
-# 1         1 less40 male 2015      64769
-# 2         1 less40 male 2016      62578
-# 3         1 less40 male 2017      68788
-# 4         1 less40 male 2018      62038
-# 5         1 less40 male 2019      67761
-# 6         1 less40 male 2020      60105
+#   NUTS318CD ageg   sex     year population
+# 1 TO        less40 female  2015     435758
+# 2 TO        less40 female  2016     427702
+# 3 TO        less40 female  2017     420498
+# 4 TO        less40 female  2018     413141
+# 5 TO        less40 female  2019     406937
+# 6 TO        less40 male    2015     449605
+# 7 TO        less40 male    2016     443941
+# 8 TO        less40 male    2017     439522
+# 9 TO        less40 male    2018     433365
+# 10 TO        less40 male    2019     427936
 
 colnames(pop15_20)
 pop15_20 <- pop15_20[, c("SIGLA", "Age", "sex", "year", "pop")]

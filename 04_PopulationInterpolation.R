@@ -18,7 +18,7 @@ installpack <- FALSE
 
 
 if(installpack){
-  install.packages(c("dplyr", "tidyr", "ggplot2", "patchwork", "stringr"))
+  install.packages(c("dplyr", "tidyr", "ggplot2", "patchwork", "stringr", "lubridate"))
 }
 
 
@@ -29,7 +29,7 @@ library(tidyr)
 library(ggplot2)
 library(patchwork)
 library(stringr)
-
+library(lubridate)
 
 load("Output/pop15_20_final.RData")
 pop <- pop15_20; rm(pop15_20)
@@ -50,13 +50,17 @@ EUROSTAT_ISO %>% mutate(num.week = lubridate::isoweek(EURO_TIME), YEAR = year(EU
 
 
 # the population file should have the following format:
-# NUTS318CD   ageg  sex year population
-# 1         1 less40 male 2015      64769
-# 2         1 less40 male 2016      62578
-# 3         1 less40 male 2017      68788
-# 4         1 less40 male 2018      62038
-# 5         1 less40 male 2019      67761
-# 6         1 less40 male 2020      60105
+#   NUTS318CD ageg   sex     year population
+# 1 TO        less40 female  2015     435758
+# 2 TO        less40 female  2016     427702
+# 3 TO        less40 female  2017     420498
+# 4 TO        less40 female  2018     413141
+# 5 TO        less40 female  2019     406937
+# 6 TO        less40 male    2015     449605
+# 7 TO        less40 male    2016     443941
+# 8 TO        less40 male    2017     439522
+# 9 TO        less40 male    2018     433365
+# 10 TO        less40 male    2019     427936
 head(pop)
 
 
@@ -64,23 +68,23 @@ head(pop)
 expand.grid(age = c("less40", "40-59", "60-69", "70-79", "80plus"), 
             sex = c("male", "female"), 
             region = unique(pop$NUTS318CD), 
-            EURO_LABEL = unique(EUROSTAT$EURO_LABEL)) -> pop_weekly
+            EURO_LABEL = unique(EUROSTAT_ISO$EURO_LABEL)) -> pop_weekly
 
 
 
 pop_weekly$EURO_LABEL <- as.character(pop_weekly$EURO_LABEL)
 
 
-EUROSTAT$EURO_TIME <- as.Date(format(as.POSIXct(EUROSTAT$EURO_TIME, format='%Y-%m-%d %H:%M:%S'), format='%Y-%m-%d'))
-EUROSTAT$year <- as.numeric(format(EUROSTAT$EURO_TIME, "%Y"))
+EUROSTAT_ISO$EURO_TIME <- as.Date(format(as.POSIXct(EUROSTAT_ISO$EURO_TIME, format='%Y-%m-%d %H:%M:%S'), format='%Y-%m-%d'))
+EUROSTAT_ISO$year <- as.numeric(format(EUROSTAT_ISO$EURO_TIME, "%Y"))
 
-EUROSTAT %>% filter(year <= 2020) %>% group_by(EURO_LABEL) %>% filter(row_number()==4) -> EUROSTAT
-EUROSTAT %>% group_by(year) %>% mutate(refdate = as.Date(paste0(year, "-01-01"))) -> EUROSTAT
-EUROSTAT$day2pred <- as.numeric(EUROSTAT$EURO_TIME - as.Date("2015-01-01") + 1)
+EUROSTAT_ISO %>% filter(year <= 2020) %>% group_by(EURO_LABEL) %>% filter(row_number()==4) -> EUROSTAT_ISO
+EUROSTAT_ISO %>% group_by(year) %>% mutate(refdate = as.Date(paste0(year, "-01-01"))) -> EUROSTAT_ISO
+EUROSTAT_ISO$day2pred <- as.numeric(EUROSTAT_ISO$EURO_TIME - as.Date("2015-01-01") + 1)
 
 
 
-pop_weekly <- left_join(pop_weekly, EUROSTAT[,c("EURO_LABEL", "year", "day2pred", "refdate")], 
+pop_weekly <- left_join(pop_weekly, EUROSTAT_ISO[,c("EURO_LABEL", "year", "day2pred", "refdate")], 
                         by = c("EURO_LABEL" = "EURO_LABEL"))
 
 
@@ -167,7 +171,7 @@ dat_weekly_VE <- pop_weekly %>% filter(NUTS318CD  %in% "VE", sex %in% "female", 
   mutate(x = as.numeric(as.factor(EURO_LABEL)))
 
 
-png("PopulationPlot.png", width = 14, height = 5, units = "cm", res = 300)
+png("Output/PopulationPlot.png", width = 14, height = 5, units = "cm", res = 300)
 (p1|p2)
 dev.off()
 
