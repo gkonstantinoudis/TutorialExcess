@@ -12,7 +12,7 @@
 
 # One can download the mortality data for 2015-2020 at 
 # https://www.istat.it/it/archivio/240401. We selected the file that includes
-# deaths till end of January. 
+# deaths till end of January. After downloading this file, put it in the data folder.
 
 
 ### THIS TO BE DELETED
@@ -23,7 +23,7 @@ installpack <- FALSE
 
 
 if(installpack){
-  install.packages(c("readr", "dplyr", "tidyr", "sf", "stringr"))
+  install.packages(c("readr", "dplyr", "tidyr", "sf", "stringr", "lubridate"))
 }
 
 
@@ -33,9 +33,10 @@ library(dplyr)
 library(tidyr)
 library(sf)
 library(stringr)
+library(lubridate)
 
 
-deaths <- read_csv("comuni_giornaliero_31gennaio21.csv")
+deaths <- read_csv("data/comuni_giornaliero_31gennaio21.csv")
 
 # subset the dataset
 deaths %>% select_at(
