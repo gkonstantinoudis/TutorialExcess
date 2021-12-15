@@ -32,8 +32,8 @@ library(ecmwfr)
 # log in and once you are ok and logged in, click on your name on the top right next to logout
 # and retrieve the information about the API key.
 
-cds.user <- "52967" # Insert your CDS user here
-cds.key <- "c0edac92-9dee-4695-8063-eebb3ace3b27" #"Insert_your_CDS_API_KEY_here"
+cds.user <- "your_CDS_key" # Insert your CDS user here
+cds.key <- "your_CDS_API_KEY_here" #"Insert_your_CDS_API_KEY_here"
 
 # create a directory and store
 dir.create("Output/")
@@ -59,20 +59,6 @@ request <- list(
   area = c(48, 6, 34, 20),
   target = "temperature2015_2020_Italy.nc"
 )
-
-# request <- list(
-#   dataset_short_name = "reanalysis-era5-single-levels",
-#   product_type   = "reanalysis",
-#   format = "netcdf",
-#   variable = "2m_temperature",
-#   date = "2015-01-01/2020-12-31",
-#   time = c("00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", 
-#            "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", 
-#            "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"),
-#   # area is specified as N, W, S, E
-#   area = c(48, 6, 34, 20),
-#   target = "temperature2015_2020_Italy.nc"
-# )
 
 
 file <- wf_request(user = cds.user,
@@ -181,9 +167,8 @@ GetTemperature <-
     return(DailyMean(start = X[1], stop = X[2], date = X[3]))
     
 }
-) # approximately 15min
+) # approximately 2h
 
-# tmp2store <- GetTemperature
 
 
 GetTemperature <- do.call(rbind, GetTemperature)
@@ -191,7 +176,6 @@ GetTemperature %>%
   mutate(ID = group_indices(., lon, lat)) -> GetTemperature
 
 
-summary(GetTemperature$temperature)
 # Now we need the shp in Italy.
 mun <- read_sf("data/ProvCM01012020_g_WGS84.shp")
 
