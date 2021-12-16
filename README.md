@@ -8,3 +8,5 @@ Instructions on how to download the raw data files are given in the correspondin
 * POP2002_2019.csv: a file containing population counts during 2002-2019
 * POP2002_2019.csv: a file containing population counts in 2020
 * link_table: an .rds file containing the links between NUTS2 and NUTS3 (province) regions in italy. 
+
+Download the data folder, unzip and put it in your working directory.
