@@ -31,7 +31,7 @@ library(tidyr)
 
 
 
-# Population for January 1st 2020 can be downloaded from: http://demo.istat.it/popres/download.php?anno=2020&lingua=ita
+# Population for January 1st 2020 can be downloaded from: https://demo.istat.it/popres/download.php?anno=2020&lingua=ita
 # selecting Province on the bottom right of the page. Save this object as POP2020 on the data folder.  
 # (POP2020 is already provided on the data folder).
 
@@ -70,7 +70,7 @@ pop20 %>%
 
 
 
-# Population for the years 2015-2019 is available here: http://demo.istat.it/ricostruzione/download.php?lingua=ita
+# Population for the years 2015-2019 is available here: https://demo.istat.it/ricostruzione/download.php?lingua=ita
 # Select the second Province link as you read the page from the top and name it POP2002_2019. Store it on the data
 # folder. # (POP2002_2019 is already provided on the data folder).
 
