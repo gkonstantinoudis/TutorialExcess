@@ -165,8 +165,6 @@ saveRDS(pop_weekly, file = "Output/pop_weekly")
 
 # For the plot we are focusing on Veneto and to female population less than 40
 
-# third panel of the plot
-
 dat_weekly_VE <- pop_weekly %>% filter(NUTS318CD  %in% "VE", sex %in% "female", age %in% "40-59", year == 2015) %>% 
   mutate(x = as.numeric(as.factor(EURO_LABEL)))
 
