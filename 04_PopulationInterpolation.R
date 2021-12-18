@@ -106,7 +106,9 @@ EUROSTAT_ISO$day2pred <- as.numeric(EUROSTAT_ISO$EURO_TIME - as.Date("2015-01-01
 
 pop_weekly <- left_join(pop_weekly, EUROSTAT_ISO[,c("EURO_LABEL", "YEAR", "day2pred", "refdate")], 
                         by = c("EURO_LABEL" = "EURO_LABEL"))
-pop_weekly %>% rename(Year = year) -> pop_weekly
+
+
+pop_weekly %>% as_tibble() %>%  rename(year = YEAR) -> pop_weekly
 
 # and now merge with the population
 
