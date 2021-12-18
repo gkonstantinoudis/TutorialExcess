@@ -36,15 +36,36 @@ pop <- pop15_20; rm(pop15_20)
 
 
 
-# the ISO weeks file
+# ISO weeks file
 EUROSTAT_ISO <- data.frame(
-  EURO_TIME = seq(as.Date("2015-01-01"), as.Date("2030-12-31"), by="days")
+  EURO_TIME = seq(as.Date("2014-12-29"), as.Date("2020-12-31"), by="days")
 )
 
 EUROSTAT_ISO %>% mutate(num.week = lubridate::isoweek(EURO_TIME), YEAR = year(EURO_TIME)) %>% 
   mutate(CD_EURO = paste0("W", str_pad(num.week, 2, pad = "0")), 
          EURO_LABEL = paste(YEAR, CD_EURO, sep = "-")) %>% 
   dplyr::select(EURO_TIME, CD_EURO, YEAR, EURO_LABEL) -> EUROSTAT_ISO
+
+
+##
+## correct the mistakes on the year change
+EUROSTAT_ISO[EUROSTAT_ISO$EURO_LABEL %in% "2014-W01",]
+EUROSTAT_ISO$EURO_LABEL[EUROSTAT_ISO$EURO_LABEL %in% "2014-W01"] <- "2015-W01"
+
+EUROSTAT_ISO[EUROSTAT_ISO$EURO_LABEL %in% "2016-W53",]
+EUROSTAT_ISO$EURO_LABEL[EUROSTAT_ISO$EURO_LABEL %in% "2016-W53"] <- "2015-W53"
+
+EUROSTAT_ISO[EUROSTAT_ISO$EURO_LABEL %in% "2017-W52",]
+EUROSTAT_ISO$EURO_LABEL[EUROSTAT_ISO$EURO_TIME == "2017-01-01"] <- "2016-W52"
+
+EUROSTAT_ISO[EUROSTAT_ISO$EURO_LABEL %in% "2018-W01",]
+EUROSTAT_ISO$EURO_LABEL[EUROSTAT_ISO$EURO_TIME == "2018-12-31"] <- "2019-W01"
+
+EUROSTAT_ISO[EUROSTAT_ISO$EURO_LABEL %in% "2019-W01",]
+EUROSTAT_ISO$EURO_LABEL[EUROSTAT_ISO$EURO_TIME == "2019-12-30"] <- "2020-W01"
+EUROSTAT_ISO$EURO_LABEL[EUROSTAT_ISO$EURO_TIME == "2019-12-31"] <- "2020-W01"
+##
+##
 
 
 
@@ -75,19 +96,17 @@ expand.grid(age = c("less40", "40-59", "60-69", "70-79", "80plus"),
 pop_weekly$EURO_LABEL <- as.character(pop_weekly$EURO_LABEL)
 
 
-EUROSTAT_ISO$EURO_TIME <- as.Date(format(as.POSIXct(EUROSTAT_ISO$EURO_TIME, format='%Y-%m-%d %H:%M:%S'), format='%Y-%m-%d'))
-EUROSTAT_ISO$year <- as.numeric(format(EUROSTAT_ISO$EURO_TIME, "%Y"))
+EUROSTAT_ISO$EURO_TIME <- as.Date(EUROSTAT_ISO$EURO_TIME)
 
-EUROSTAT_ISO %>% filter(year <= 2020) %>% group_by(EURO_LABEL) %>% filter(row_number()==4) -> EUROSTAT_ISO
-EUROSTAT_ISO %>% group_by(year) %>% mutate(refdate = as.Date(paste0(year, "-01-01"))) -> EUROSTAT_ISO
+EUROSTAT_ISO %>% filter(YEAR <= 2020) %>% group_by(EURO_LABEL) %>% filter(row_number()==4) -> EUROSTAT_ISO
+EUROSTAT_ISO %>% group_by(YEAR) %>% mutate(refdate = as.Date(paste0(YEAR, "-01-01"))) -> EUROSTAT_ISO
 EUROSTAT_ISO$day2pred <- as.numeric(EUROSTAT_ISO$EURO_TIME - as.Date("2015-01-01") + 1)
 
 
 
-pop_weekly <- left_join(pop_weekly, EUROSTAT_ISO[,c("EURO_LABEL", "year", "day2pred", "refdate")], 
+pop_weekly <- left_join(pop_weekly, EUROSTAT_ISO[,c("EURO_LABEL", "YEAR", "day2pred", "refdate")], 
                         by = c("EURO_LABEL" = "EURO_LABEL"))
-
-
+pop_weekly %>% rename(Year = year) -> pop_weekly
 
 # and now merge with the population
 

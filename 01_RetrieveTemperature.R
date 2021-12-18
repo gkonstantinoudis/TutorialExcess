@@ -23,6 +23,8 @@ if(installpack){
   install.packages(c("ecmwfr"))
 }
 
+# and create a new directory to store the output
+dir.create("Output/")
 
 # load packages
 library(ecmwfr)
@@ -35,8 +37,6 @@ library(ecmwfr)
 cds.user <- "your_CDS_key" # Insert your CDS user here
 cds.key <- "your_CDS_API_KEY_here" #"Insert_your_CDS_API_KEY_here"
 
-# create a directory and store
-dir.create("Output/")
 
 # Set up the API and UID
 wf_set_key(user = cds.user, key = cds.key, service = "cds")
@@ -192,15 +192,43 @@ GetTemperature$week <- week(GetTemperature$date)
 GetTemperature$year <- year(GetTemperature$date)
 
 
-# make sure its ISO weeks
+
+
+
+# ISO weeks file
 EUROSTAT_ISO <- data.frame(
-  EURO_TIME = seq(as.Date("2015-01-01"), as.Date("2030-12-31"), by="days")
+  EURO_TIME = seq(as.Date("2014-12-29"), as.Date("2020-12-31"), by="days")
 )
 
 EUROSTAT_ISO %>% mutate(num.week = lubridate::isoweek(EURO_TIME), YEAR = year(EURO_TIME)) %>% 
   mutate(CD_EURO = paste0("W", str_pad(num.week, 2, pad = "0")), 
          EURO_LABEL = paste(YEAR, CD_EURO, sep = "-")) %>% 
   dplyr::select(EURO_TIME, CD_EURO, YEAR, EURO_LABEL) -> EUROSTAT_ISO
+
+
+##
+## correct the mistakes on the year change
+EUROSTAT_ISO[EUROSTAT_ISO$EURO_LABEL %in% "2014-W01",]
+EUROSTAT_ISO$EURO_LABEL[EUROSTAT_ISO$EURO_LABEL %in% "2014-W01"] <- "2015-W01"
+
+EUROSTAT_ISO[EUROSTAT_ISO$EURO_LABEL %in% "2016-W53",]
+EUROSTAT_ISO$EURO_LABEL[EUROSTAT_ISO$EURO_LABEL %in% "2016-W53"] <- "2015-W53"
+
+EUROSTAT_ISO[EUROSTAT_ISO$EURO_LABEL %in% "2017-W52",]
+EUROSTAT_ISO$EURO_LABEL[EUROSTAT_ISO$EURO_TIME == "2017-01-01"] <- "2016-W52"
+
+EUROSTAT_ISO[EUROSTAT_ISO$EURO_LABEL %in% "2018-W01",]
+EUROSTAT_ISO$EURO_LABEL[EUROSTAT_ISO$EURO_TIME == "2018-12-31"] <- "2019-W01"
+
+EUROSTAT_ISO[EUROSTAT_ISO$EURO_LABEL %in% "2019-W01",]
+EUROSTAT_ISO$EURO_LABEL[EUROSTAT_ISO$EURO_TIME == "2019-12-30"] <- "2020-W01"
+EUROSTAT_ISO$EURO_LABEL[EUROSTAT_ISO$EURO_TIME == "2019-12-31"] <- "2020-W01"
+##
+##
+
+
+
+
 
 # merge the EUROSTAT_ISO with the temperature
 GetTemperature <- left_join(GetTemperature, EUROSTAT_ISO, by = c("date" = "EURO_TIME"))

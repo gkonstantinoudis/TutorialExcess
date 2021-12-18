@@ -165,7 +165,7 @@ for(j in 1:nrow(groups4cv)){
   list.CV.results.spacetime <- list()
   
   for(i in 1:5){
-    
+    print(i)
     datCV <- datCV_firslop
     testIndexes <- which(datCV$year %in% years[i], arr.ind=TRUE)
     datCV$deaths[testIndexes] <- NA
