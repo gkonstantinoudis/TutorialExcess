@@ -126,8 +126,8 @@ hour <- ncvar_get(temperature,"time")
 hour_tr <- as.POSIXct(hour*3600, origin="1900-01-01 00:00")
 hour_tr <- format(as.POSIXct(hour_tr,format='%Y-%m-%d %H:%M:%S GMT'),format='%Y-%m-%d')
 
-dat <- data.frame(start = seq(from = 1, to = 52608, by = 24), 
-                  stop = seq(from = 24, to = 52608, by = 24))
+dat <- data.frame(start = seq(from = 1, to = length(hour_tr), by = 24), 
+                  stop = seq(from = 24, to = length(hour_tr), by = 24))
 
 un.hour <- unique(hour_tr)
 un.hour <- un.hour[order(un.hour)]
@@ -166,7 +166,7 @@ GetTemperature <-
     return(DailyMean(start = X[1], stop = X[2], date = X[3]))
     
 } 
-) # approximately 2h
+) # approximately 1h
 
 
 
@@ -191,7 +191,10 @@ GetTemperature$week <- week(GetTemperature$date)
 GetTemperature$year <- year(GetTemperature$date)
 
 
-
+##
+##
+##
+##
 
 
 # ISO weeks file
