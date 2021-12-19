@@ -64,7 +64,7 @@ file <- wf_request(user = cds.user,
                    request = request,
                    transfer = TRUE,
                    path = "Output/",
-                   time_out = 3600*12,
+                   time_out = 3600*24,
                    verbose = TRUE)
 
 
