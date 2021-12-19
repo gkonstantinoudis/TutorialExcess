@@ -37,7 +37,6 @@ library(ecmwfr)
 cds.user <- "your_CDS_key" # Insert your CDS user here
 cds.key <- "your_CDS_API_KEY_here" #"Insert_your_CDS_API_KEY_here"
 
-
 # Set up the API and UID
 wf_set_key(user = cds.user, key = cds.key, service = "cds")
 
@@ -51,7 +50,7 @@ request <- list(
   product_type   = "reanalysis",
   format = "netcdf",
   variable = "2m_temperature",
-  date = "2015-01-01/2020-12-31",
+  date = "2015-01-01/2021-01-03", # this is to match the ISO weeks
   time = c("00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", 
            "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", 
            "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"),
@@ -166,7 +165,7 @@ GetTemperature <-
     
     return(DailyMean(start = X[1], stop = X[2], date = X[3]))
     
-}
+} 
 ) # approximately 2h
 
 
