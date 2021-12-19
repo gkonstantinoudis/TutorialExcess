@@ -197,35 +197,17 @@ GetTemperature$year <- year(GetTemperature$date)
 
 # ISO weeks file
 EUROSTAT_ISO <- data.frame(
-  EURO_TIME = seq(as.Date("2014-12-29"), as.Date("2020-12-31"), by="days")
+  EURO_TIME = seq(as.Date("2014-12-29"), as.Date("2021-01-03"), by="days")
 )
 
-EUROSTAT_ISO %>% mutate(num.week = lubridate::isoweek(EURO_TIME), YEAR = year(EURO_TIME)) %>% 
+EUROSTAT_ISO %>% mutate(num.week = lubridate::isoweek(EURO_TIME), 
+                        YEAR_ISO = lubridate::isoyear(EURO_TIME), 
+                        YEAR = year(EURO_TIME)) %>% 
   mutate(CD_EURO = paste0("W", str_pad(num.week, 2, pad = "0")), 
-         EURO_LABEL = paste(YEAR, CD_EURO, sep = "-")) %>% 
+         EURO_LABEL = paste(YEAR_ISO, CD_EURO, sep = "-")) %>% 
   dplyr::select(EURO_TIME, CD_EURO, YEAR, EURO_LABEL) -> EUROSTAT_ISO
 
-
-##
-## correct the mistakes on the year change
-EUROSTAT_ISO[EUROSTAT_ISO$EURO_LABEL %in% "2014-W01",]
-EUROSTAT_ISO$EURO_LABEL[EUROSTAT_ISO$EURO_LABEL %in% "2014-W01"] <- "2015-W01"
-
-EUROSTAT_ISO[EUROSTAT_ISO$EURO_LABEL %in% "2016-W53",]
-EUROSTAT_ISO$EURO_LABEL[EUROSTAT_ISO$EURO_LABEL %in% "2016-W53"] <- "2015-W53"
-
-EUROSTAT_ISO[EUROSTAT_ISO$EURO_LABEL %in% "2017-W52",]
-EUROSTAT_ISO$EURO_LABEL[EUROSTAT_ISO$EURO_TIME == "2017-01-01"] <- "2016-W52"
-
-EUROSTAT_ISO[EUROSTAT_ISO$EURO_LABEL %in% "2018-W01",]
-EUROSTAT_ISO$EURO_LABEL[EUROSTAT_ISO$EURO_TIME == "2018-12-31"] <- "2019-W01"
-
-EUROSTAT_ISO[EUROSTAT_ISO$EURO_LABEL %in% "2019-W01",]
-EUROSTAT_ISO$EURO_LABEL[EUROSTAT_ISO$EURO_TIME == "2019-12-30"] <- "2020-W01"
-EUROSTAT_ISO$EURO_LABEL[EUROSTAT_ISO$EURO_TIME == "2019-12-31"] <- "2020-W01"
-##
-##
-
+saveRDS(EUROSTAT_ISO, file = "Output/EUROSTAT_ISO")
 
 
 
