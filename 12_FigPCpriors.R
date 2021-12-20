@@ -48,7 +48,6 @@ n <- nrow(W)
 QQ <- W
 
 
-?INLA:::inla.pc.bym.phi
 log.prior = INLA:::inla.pc.bym.phi(Q = QQ, rankdef = 1, u = 0.5, alpha = 0.5)
 phis = 1/(1+exp(-seq(-7, 7, len=10000)))
 
