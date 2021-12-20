@@ -171,7 +171,7 @@ for(j in 1:nrow(groups4cv)){
 }
 
 t_1 <- Sys.time()
-print(t_1 - t_0)
+print(t_1 - t_0) # ~4h
 
 
 
