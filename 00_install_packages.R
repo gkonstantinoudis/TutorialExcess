@@ -5,7 +5,7 @@ pkgs <- c("dplyr", "ecmwfr", "FNN", "ggplot2", "grid", "lctools", "lubridate",
   "maptools", "ncdf4", "patchwork", "pbapply", "plotly", "plyr", 
   "raster", "RColorBrewer", "readr", "reshape2", "rgdal", "sf", 
   "sp", "spacetime", "spdep", "stringr", "tidyr", "tidyverse", 
-  "timeDate", "viridis", "xtable", "xts")
+  "timeDate", "viridis", "xtable", "xts", "data.table")
 install.packages(pkgs, dep = TRUE)
 
 # Install INLA (off CRAN)

@@ -13,15 +13,7 @@ setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/")
 ###
 
 
-installpack <- FALSE
-
-
 # Step 1. Download temperature data from ERA5
-
-# install required packages
-if(installpack){
-  install.packages(c("ecmwfr"))
-}
 
 # and create a new directory to store the output
 dir.create("Output/")
@@ -90,13 +82,6 @@ file <- wf_request(user = cds.user,
 
 # Step 2. Clean the temperature file
 
-if(installpack){
-  install.packages(c("ncdf4", "plyr", "tidyr", "pbapply", "sf", 
-                     "tidyverse", ",maptools", "lctools", "raster", 
-                     "lubridate", "spdep", "FNN", "patchwork", "dplyr", "stringr"))
-}
-
-
 
 library(ncdf4)
 library(plyr)
@@ -113,6 +98,7 @@ library(FNN)
 library(patchwork)
 library(dplyr)
 library(stringr)
+library(data.table)
 
 # read the files
 temperature <- nc_open("Output/temperature2015_2020_Italy.nc")
@@ -191,12 +177,6 @@ GetTemperature$week <- week(GetTemperature$date)
 GetTemperature$year <- year(GetTemperature$date)
 
 
-##
-##
-##
-##
-
-
 # ISO weeks file
 EUROSTAT_ISO <- data.frame(
   EURO_TIME = seq(as.Date("2014-12-29"), as.Date("2021-01-03"), by="days")
@@ -209,8 +189,8 @@ EUROSTAT_ISO %>% mutate(num.week = lubridate::isoweek(EURO_TIME),
          EURO_LABEL = paste(YEAR_ISO, CD_EURO, sep = "-")) %>% 
   dplyr::select(EURO_TIME, CD_EURO, YEAR, EURO_LABEL) -> EUROSTAT_ISO
 
+# store it because is needed for the other rfiles too.
 saveRDS(EUROSTAT_ISO, file = "Output/EUROSTAT_ISO")
-
 
 
 
@@ -230,15 +210,17 @@ names(table(GetTemperature_tmp$EURO_LABEL)) -> namtab
 
 # Now I need to overlay it on the shp and take the mean by municipality and week
 loopID <- unique(GetTemperature_tmp$EURO_LABEL)
-list.loop <- list()
-list.plot <- list()
 
 mun$IDSpace <- 1:nrow(mun)
+mun$IDSpace <- as.character(mun$IDSpace)
 
-for(i in 1:length(loopID)){
+# Work on data.table to speed up the filter() computation (line 240)
+GetTemperature_tmp <- as.data.table(GetTemperature_tmp)
   
-  print(i)
-  tmp <- GetTemperature_tmp %>% filter(EURO_LABEL %in% loopID[i])
+pblapply(1:length(loopID), function(X){
+  
+  i <- X
+  tmp <- GetTemperature_tmp[EURO_LABEL == loopID[i]]
   tmp_sf <- st_as_sf(tmp, coords = c("X", "Y"), crs = st_crs(mun))
   tmp_sf$X <- tmp$X
   tmp_sf$Y <- tmp$Y
@@ -258,10 +240,10 @@ for(i in 1:length(loopID)){
   
   tmp_stjoin <- tmp_stjoin[,c("IDSpace", "EURO_LABEL", "mean.temp")]
   tmp_stjoin$IDSpace <- as.character(tmp_stjoin$IDSpace)
-  mun$IDSpace <- as.character(mun$IDSpace)
   
-  list.loop[[i]] <- tmp_stjoin
-}
+  return(tmp_stjoin)
+  }
+) -> list.loop
 
 
 loop.df <- do.call(rbind, list.loop)
@@ -281,13 +263,11 @@ saveRDS(loop.df, file = "Output/TemperatureWeeklyItaly")
 
 
 
-
 # Code for Figure 1
 
 GetTemperature[GetTemperature$date == "2015-01-01",] -> tmp_points
 
 tmp.rstr <- raster("Output/temperature2015_2020_Italy.nc")
-plot(tmp.rstr[[1]])
 
 gplot_data <- function(x, maxpixels = 50000)  {
   x <- raster::sampleRegular(x, maxpixels, asRaster = TRUE)
