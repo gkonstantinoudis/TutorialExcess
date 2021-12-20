@@ -8,16 +8,11 @@
 # Clean the mortality file in Italy. 
 
 
-#-----------------------------------------------------------------
+#---------------------------------------------------------------------------------
 
 # One can download the mortality data for 2015-2020 at 
 # https://www.istat.it/it/archivio/240401. We selected the file that includes
 # deaths till end of January. After downloading this file, put it in the data folder.
-
-
-### THIS TO BE DELETED
-setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/")
-### 
 
 
 library(readr)

@@ -4,13 +4,7 @@
 
 # Cross validation
 
-#-----------------------------------------------------------------
-
-
-
-### THIS TO BE DELETED
-setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/")
-### 
+#---------------------------------------------------------------------------------
 
 path2save <- "Output/"
 

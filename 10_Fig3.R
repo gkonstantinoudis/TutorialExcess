@@ -3,10 +3,10 @@
 # Created 19.11.2021
 
 
-# Fig3
+# Fig. 4
 
 
-####################################################################
+#---------------------------------------------------------------------------------
 
 library(dplyr)
 library(ggplot2)
@@ -19,10 +19,6 @@ library(sf)
 library(RColorBrewer)
 library(leaflet)
 
-
-### THIS TO BE DELETED
-setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/")
-### 
 
 load("Output/Italy.RData")
 

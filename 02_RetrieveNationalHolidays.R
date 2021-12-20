@@ -7,10 +7,6 @@
 
 #---------------------------------------------------------------------------------
 
-### THIS TO BE DELETED
-setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/")
-### 
-
 library(timeDate)
 library(lubridate)
 library(dplyr)

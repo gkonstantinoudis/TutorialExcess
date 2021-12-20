@@ -3,11 +3,10 @@
 # Created 10.12.2021 
 
 
-# PC prior plots
+# Fig 3. PC prior plots
 
 
-####################################################################
-
+#---------------------------------------------------------------------------------
 
 library(INLA)
 library(ggplot2)
@@ -15,10 +14,6 @@ library(patchwork)
 library(sf)
 library(spdep)
 
-
-### THIS TO BE DELETED
-setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/")
-### 
 
 # prior for standard deviation
 

@@ -8,12 +8,6 @@
 
 #---------------------------------------------------------------------------------
 
-
-### THIS TO BE DELETED
-setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/")
-### 
-
-
 library(dplyr)
 library(tidyr)
 library(ggplot2)
@@ -149,7 +143,7 @@ saveRDS(pop_weekly, file = "Output/pop_weekly")
 dat_weekly_VE <- pop_weekly %>% filter(NUTS318CD  %in% "VE", sex %in% "female", age %in% "40-59", year == 2015) %>% 
   mutate(x = as.numeric(as.factor(EURO_LABEL)))
 
-
+# Figure 1
 png("Output/PopulationPlot.png", width = 14, height = 5, units = "cm", res = 300)
 (p1|p2)
 dev.off()

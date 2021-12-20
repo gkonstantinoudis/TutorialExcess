@@ -3,11 +3,10 @@
 # Created 19.11.2021
 
 
-# Fig4
+# Fig. 5
 
 
-####################################################################
-
+#---------------------------------------------------------------------------------
 
 
 library(dplyr)
@@ -17,9 +16,6 @@ library(viridis)
 library(patchwork)
 library(RColorBrewer)
 
-### THIS TO BE DELETED
-setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/")
-### 
 
 load("Output/Italy.RData")
 

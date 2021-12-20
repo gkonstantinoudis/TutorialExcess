@@ -8,11 +8,6 @@
 
 #---------------------------------------------------------------------------------
 
-### THIS TO BE DELETED
-setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/")
-###
-
-
 # Step 1. Download temperature data from ERA5
 
 # and create a new directory to store the output
@@ -263,7 +258,7 @@ saveRDS(loop.df, file = "Output/TemperatureWeeklyItaly")
 
 
 
-# Code for Figure 1
+# Code for Figure 2
 
 GetTemperature[GetTemperature$date == "2015-01-01",] -> tmp_points
 
