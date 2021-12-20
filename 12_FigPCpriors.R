@@ -5,16 +5,9 @@
 
 # PC prior plots
 
-#-----------------------------------------------------------------
 
+####################################################################
 
-installpack <- FALSE
-
-
-if(installpack){
-  install.packages(c("ggplot2", "patchwork", "sf", "spdep"))
-  install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-download.org/R/stable"), dep=TRUE)
-}
 
 library(INLA)
 library(ggplot2)

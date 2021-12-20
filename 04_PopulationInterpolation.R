@@ -14,16 +14,6 @@ setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/")
 ### 
 
 
-installpack <- FALSE
-
-
-if(installpack){
-  install.packages(c("dplyr", "tidyr", "ggplot2", "patchwork", "stringr", "lubridate"))
-}
-
-
-
-
 library(dplyr)
 library(tidyr)
 library(ggplot2)

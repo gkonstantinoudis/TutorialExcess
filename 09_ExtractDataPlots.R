@@ -14,13 +14,6 @@
 setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/")
 ### 
 
-installpack <- FALSE
-
-
-if(installpack){
-  install.packages(c("sp", "sf", "xts", "spacetime", "RColorBrewer", "plotly", "grid", "dplyr", "pbapply", "viridis"))
-}
-
 
 library(sp)
 library(sf)

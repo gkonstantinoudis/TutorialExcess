@@ -14,15 +14,6 @@ setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/")
 
 path2save <- "Output/"
 
-installpack <- FALSE
-
-
-if(installpack){
-  install.packages(c("sf", "dplyr", "spdep"))
-  install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-download.org/R/stable"), dep=TRUE)
-}
-
-
 
 library(INLA)
 library(dplyr)

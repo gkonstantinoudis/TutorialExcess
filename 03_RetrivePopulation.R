@@ -12,14 +12,6 @@
 setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/")
 ###
 
-installpack <- FALSE
-
-
-if(installpack){
-  install.packages(c("tidyverse", "reshape2", "lubridate", "rgdal", "spdep", "readr", "tidyr"))
-}
-
-
 
 library(tidyverse)
 library(reshape2)

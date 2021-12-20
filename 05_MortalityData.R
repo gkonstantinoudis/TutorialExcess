@@ -19,14 +19,6 @@
 setwd("E:/Postdoc Imperial/Projects/COVID19 Greece/TutorialExcess/")
 ### 
 
-installpack <- FALSE
-
-
-if(installpack){
-  install.packages(c("readr", "dplyr", "tidyr", "sf", "stringr", "lubridate"))
-}
-
-
 
 library(readr)
 library(dplyr)
