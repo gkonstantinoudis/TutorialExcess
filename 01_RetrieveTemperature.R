@@ -11,7 +11,8 @@
 # Step 1. Download temperature data from ERA5
 
 # and create a new directory to store the output
-dir.create("Output/")
+if(!dir.exists("Output"))
+  dir.create("Output/")
 
 # load packages
 library(ecmwfr)
