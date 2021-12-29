@@ -12,6 +12,17 @@ The data folder includes:
 * link_table: an .rds file containing the links between NUTS2 and NUTS3 (province) regions in italy. 
 
 The output folder includes:
-* The 4 manuscript figures: 
+* temperature2015_2020.nc: the raw temperature file downloaded from ERA5
+* yearCV_* : the cross validation results
+* res_* : the model based results 
+* TemperatureWeekleItaly: the clean temperature file
+* poisson_samples_all: the output of the posterior samples from a poisson
+* Italy.R: the different aggregations used
+* pop_weekly: the weekly population file, after performing the linear interpolation
+* pop15_20_final: the clean population file
+* findata: the clean final data file
+* holiday_df: the file including the national holidays
+* EUROSTAT_ISO: the iso weeks during 2015-2020
+* The 4 manuscript figures: PopulationPlot.png, ERAPOINTS.png, PCpriors.png, SpatiotemporalRegions.png and PosteriorProb.png
 
-Download the folders, unzip and put it in your working directory.
+Download the folders, unzip and put it in your working directory. You can skip download the Output file, as all the files there can be downloaded following the instruction of the Rfiles. 
