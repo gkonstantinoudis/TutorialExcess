@@ -22,9 +22,10 @@ library(tidyr)
 # selecting Province on the bottom right of the page. Save this object as POP2020 on the data folder.  
 # (POP2020 is already provided on the data folder).
 
-pop20 <- read_csv("data/POP2020.csv")
-colnames(pop20) <- pop20[1,]
-pop20 <- pop20[-1,]
+# SKip 1st line as it is a table header with a description of the data
+pop20 <- read_csv("data/POP2020.csv", skip = 1)
+#colnames(pop20) <- pop20[1,]
+#pop20 <- pop20[-1,]
 
 
 pop20 = pop20 %>% select(`Codice provincia`, `Provincia`, `Totale Maschi`, `Totale Femmine`, `Età`)
