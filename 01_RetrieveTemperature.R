@@ -47,14 +47,14 @@ request <- list(
   target = "temperature2015_2020_Italy.nc"
 )
 
-
-file <- wf_request(user = cds.user,
+if(!file.exists("Output/temperature2015_2020_Italy.nc")) {
+  file <- wf_request(user = cds.user,
                    request = request,
                    transfer = TRUE,
                    path = "Output/",
                    time_out = 3600*24,
                    verbose = TRUE)
-
+}
 
 # and you will get a temperature_Italy.nc file on your working directory. 
 
