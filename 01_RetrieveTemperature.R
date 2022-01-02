@@ -106,7 +106,7 @@ lat <- ncvar_get(temperature,"latitude")
 hour <- ncvar_get(temperature,"time")
 # hours since 1900-01-01
 hour_tr <- as.POSIXct(hour*3600, origin="1900-01-01 00:00")
-hour_tr <- format(as.POSIXct(hour_tr,format='%Y-%m-%d %H:%M:%S GMT'),format='%Y-%m-%d')
+hour_tr <- format(as.POSIXct(hour_tr,format='%Y-%m-%d %H:%M:%S GMT'),format='%Y-%m-%d', tz = "Europe/London")
 
 dat <- data.frame(start = seq(from = 1, to = length(hour_tr), by = 24), 
                   stop = seq(from = 24, to = length(hour_tr), by = 24))
