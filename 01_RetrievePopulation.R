@@ -27,34 +27,21 @@ pop20 <- read_csv("data/POP2020.csv", skip = 1)
 #colnames(pop20) <- pop20[1,]
 #pop20 <- pop20[-1,]
 
+colnames(pop20)[3] <- 'Eta'
 
-pop20 = pop20 %>% select(`Codice provincia`, `Provincia`, `Totale Maschi`, `Totale Femmine`, `Età`)
+pop20 = pop20 %>% select(`Codice provincia`, `Provincia`, `Totale Maschi`, `Totale Femmine`, `Eta`)
 
 
-pop20 %>% select(`Codice provincia`, `Provincia`, `Totale Maschi`, `Età`) %>% 
+pop20 %>% select(`Codice provincia`, `Provincia`, `Totale Maschi`, `Eta`) %>% 
   mutate(sex = "M") %>% 
   rename(Value := `Totale Maschi`) %>% 
   rbind(., 
-        pop20 %>% select(`Codice provincia`, `Provincia`, `Totale Femmine`, `Età`) %>% 
+        pop20 %>% select(`Codice provincia`, `Provincia`, `Totale Femmine`, `Eta`) %>% 
           mutate(sex = "F") %>% 
           rename(Value := `Totale Femmine`)) %>% 
   rename(Code := `Codice provincia`, 
          Province = Provincia, 
-         Age := `Età`) -> pop20
-
-
-# and aggregate by the selected age groups
-pop20 %>% 
-  mutate(Age = as.numeric(Age)) %>% # remove NAs since they reflect the Totals
-  filter(!is.na(Age)) %>% 
-  mutate(
-  Age = cut(Age, breaks = c(-1, 39, 59, 69, 79, 101), 
-            labels = c("less40", "40-59", "60-69", "70-79", "80plus"))
-) %>% 
-  group_by(Code, Province, Age, sex) %>% 
-  summarise(pop = sum(as.numeric(Value))) %>% 
-  mutate(year = 2020) -> pop20
-
+         Age := `Eta`) -> pop20
 
 
 
@@ -66,12 +53,14 @@ pop15_19 <- read_delim("data/POP2002_2019.csv",
                              ";", escape_double = FALSE, trim_ws = TRUE, 
                               skip = 4)
 
+colnames(pop15_19)[1] <- "Territorio/Eta"
+
 # We are interested in all nationalities and the years 2015:2019
-pop15_19 <- pop15_19[(which(pop15_19$`Territorio/Età` == "Tutte le cittadinanze - Anno: 2015")):
-                       (which(pop15_19$`Territorio/Età` == "Cittadinanza italiana - Anno: 2002")), ]
+pop15_19 <- pop15_19[(which(pop15_19$`Territorio/Eta` == "Tutte le cittadinanze - Anno: 2015")):
+                       (which(pop15_19$`Territorio/Eta` == "Cittadinanza italiana - Anno: 2002")), ]
 
 
-n.dat <- length(unique(as.numeric(pop15_19$`Territorio/Età`)))
+n.dat <- length(unique(as.numeric(pop15_19$`Territorio/Eta`)))
 
 
 
@@ -124,10 +113,14 @@ pop15_20 <- rbind(pop15_19, pop20)
 
 
 # Fix problems with province names (with respect to the shapefile names)
-pop15_20$Province[pop15_20$Province=="Valle d'Aosta/Vallée d'Aoste"] = "Aosta"
+pop15_20$Province[pop15_20$Province=="Valle d'Aosta/Vall?e d'Aoste"] = "Aosta"
 pop15_20$Province[pop15_20$Province=="Bolzano/Bozen"] = "Bolzano"
-pop15_20$Province[pop15_20$Province=="Forlì-Cesena"] = "Forli'-Cesena"
+pop15_20$Province[pop15_20$Province=="Forl?-Cesena"] = "Forli'-Cesena"
 pop15_20$Province[pop15_20$Province=="Massa-Carrara"] = "Massa Carrara"
+
+# if different encoding
+pop15_20$Province[pop15_20$Province=="Valle d'Aosta/VallÃ©e d'Aoste"] = "Aosta"
+pop15_20$Province[pop15_20$Province=="ForlÃ¬-Cesena"] = "Forli'-Cesena"
 
 
 
