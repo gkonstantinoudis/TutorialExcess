@@ -43,6 +43,9 @@ pop20 %>% select(`Codice provincia`, `Provincia`, `Totale Maschi`, `Eta`) %>%
          Province = Provincia, 
          Age := `Eta`) -> pop20
 
+pop20 <- pop20[complete.cases(pop20),]
+# also remove the total age
+pop20 %>% filter(!Age %in% "Totale") -> pop20
 
 
 # Population for the years 2015-2019 is available here: https://demo.istat.it/ricostruzione/download.php?lingua=ita
@@ -91,21 +94,18 @@ pop15_19 <- gather(pop15_19, Age, pop, `0`:`100`)
 colnames(pop15_19)[c(1:2)] <- c("Code", "Province")
 pop20$year <- 2020
 pop15_19 <- pop15_19[,colnames(pop20)]
+pop15_20 <- rbind(pop15_19, pop20)
 
 
 # aggregate by age group
-pop15_19 %>% 
+pop15_20 %>% 
   mutate(Age = as.numeric(Age)) %>% 
   mutate(
     Age = cut(Age, breaks = c(-1, 39, 59, 69, 79, 101), 
               labels = c("less40", "40-59", "60-69", "70-79", "80plus"))
   ) %>% 
   group_by(Code, Province, Age, sex, year) %>% 
-  summarise(pop = sum(as.numeric(pop))) -> pop15_19
-
-
-pop15_20 <- rbind(pop15_19, pop20)
-
+  summarise(pop = sum(as.numeric(pop))) -> pop15_20
 
 
 
@@ -114,15 +114,10 @@ pop15_20 <- rbind(pop15_19, pop20)
 
 
 # Fix problems with province names (with respect to the shapefile names)
-pop15_20$Province[pop15_20$Province=="Valle d'Aosta/Vall?e d'Aoste"] = "Aosta"
+pop15_20$Province[startsWith(pop15_20$Province, "Valle d")] = "Aosta"
 pop15_20$Province[pop15_20$Province=="Bolzano/Bozen"] = "Bolzano"
-pop15_20$Province[pop15_20$Province=="Forl?-Cesena"] = "Forli'-Cesena"
+pop15_20$Province[startsWith(pop15_20$Province, "Forl")] = "Forli'-Cesena"
 pop15_20$Province[pop15_20$Province=="Massa-Carrara"] = "Massa Carrara"
-
-# if different encoding
-pop15_20$Province[pop15_20$Province=="Valle d'Aosta/Vallée d'Aoste"] = "Aosta"
-pop15_20$Province[pop15_20$Province=="Forlì-Cesena"] = "Forli'-Cesena"
-
 
 
 
