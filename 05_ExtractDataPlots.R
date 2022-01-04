@@ -105,9 +105,16 @@ d <- lapply(geo.res, function(GEO) {
     if(STRATA == "none") {
       aux2 <- compute.excess(aux, mortality="REM", geo.name = geo.name)
       aux3 <- compute.excess(aux, mortality="NED", geo.name = geo.name)
+      
+      aux3 = aux3 %>% mutate(
+        median.pred = apply(as.matrix(aux3 %>% select(contains("xs"))),1,median,na.rm=T),
+        LL.pred = apply(as.matrix(aux3 %>% select(contains("xs"))),1,quantile,.025,na.rm=T),
+        UL.pred = apply(as.matrix(aux3 %>% select(contains("xs"))),1,quantile,.975,na.rm=T))
+      
       aux <- cbind(select(aux, !starts_with("V")),
                    select(aux2, !starts_with(c("xs", geo.name))),
                    select(aux3, !starts_with(c("xs", geo.name))))
+      
       aux <- merge(MAPS$IT[[GEO]], aux)
       
       # Re-scale REM
@@ -118,6 +125,13 @@ d <- lapply(geo.res, function(GEO) {
         
         aux2 <- compute.excess(X, mortality="REM", geo.name = geo.name)
         aux3 <- compute.excess(X, mortality="NED", geo.name = geo.name)
+        
+        aux3 = aux3 %>% mutate(
+          median.pred = apply(as.matrix(aux3 %>% select(contains("xs"))),1,median,na.rm=T),
+          LL.pred = apply(as.matrix(aux3 %>% select(contains("xs"))),1,quantile,.025,na.rm=T),
+          UL.pred = apply(as.matrix(aux3 %>% select(contains("xs"))),1,quantile,.975,na.rm=T))
+        
+        
         res <- cbind(select(X, !starts_with("V")),
                      select(aux2, !starts_with(c("xs", geo.name))),
                      select(aux3, !starts_with(c("xs", geo.name))))
@@ -158,6 +172,12 @@ d_week <- lapply(geo.res, function(GEO) {
       aux$COUNTRY <- "Italy"
       aux2 <- compute.excess(aux, mortality="REM", geo.name = geo.name)
       aux3 <- compute.excess(aux, mortality="NED", geo.name = geo.name)
+      
+      aux3 = aux3 %>% mutate(
+        median.pred = apply(as.matrix(aux3 %>% select(contains("xs"))),1,median,na.rm=T),
+        LL.pred = apply(as.matrix(aux3 %>% select(contains("xs"))),1,quantile,.025,na.rm=T),
+        UL.pred = apply(as.matrix(aux3 %>% select(contains("xs"))),1,quantile,.975,na.rm=T))
+      
       aux <- cbind(select(aux, !starts_with("V")),
                    select(aux2, !starts_with(c("xs", geo.name))),
                    select(aux3, !starts_with(c("xs", geo.name))))
@@ -170,6 +190,12 @@ d_week <- lapply(geo.res, function(GEO) {
       aux <- lapply(aux, function(X){
         aux2 <- compute.excess(X, mortality="REM", geo.name = geo.name)
         aux3 <- compute.excess(X, mortality="NED", geo.name = geo.name)
+        
+        aux3 = aux3 %>% mutate(
+          median.pred = apply(as.matrix(aux3 %>% select(contains("xs"))),1,median,na.rm=T),
+          LL.pred = apply(as.matrix(aux3 %>% select(contains("xs"))),1,quantile,.025,na.rm=T),
+          UL.pred = apply(as.matrix(aux3 %>% select(contains("xs"))),1,quantile,.975,na.rm=T))
+        
         res <- cbind(select(X, !starts_with("V")),
                      select(aux2, !starts_with(c("xs", geo.name))),
                      select(aux3, !starts_with(c("xs", geo.name))))
