@@ -81,8 +81,8 @@ rescale_REM <- function(obj) {
   mutate(obj, mean.REM = 100 * mean.REM,          
          median.REM = 100 * median.REM,
          sd.REM = 100 * sd.REM,
-         low.REM = 100 * LL.REM,
-         upp.REM = 100 * UL.REM
+         LL.REM = 100 * LL.REM,
+         UL.REM = 100 * UL.REM
   )
 }
 
