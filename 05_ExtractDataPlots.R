@@ -63,7 +63,7 @@ MAPS$IT$COUNTRY <- "Italy"
 MAPS$IT <- list(
   country = MAPS$IT %>% group_by(COUNTRY) %>% summarise() %>% st_simplify(dTolerance = 500),
   region = MAPS$IT %>% group_by(NAMNUTS2) %>% summarise() %>% st_simplify(dTolerance = 500),
-  province = MAPS$IT %>% select(ID_space, SIGLA) %>% st_simplify(dTolerance = 500)
+  province = MAPS$IT %>% select(ID_space, SIGLA, DEN_UTS) %>% st_simplify(dTolerance = 500)
 )
 
 # Add NAME
