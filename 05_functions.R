@@ -470,6 +470,13 @@ compute.excess = function(data, mortality="REM", geo.name){
   xs=-1*sweep(as.matrix(data %>% select(starts_with("V"))),
               1,data$observed,FUN ="-")
   
+  sum.stats <- data.frame(
+    median.pred = apply(as.matrix(data %>% select(contains("V"))),1,median,na.rm=T),
+    LL.pred = apply(as.matrix(data %>% select(contains("V"))),1,quantile,.025,na.rm=T),
+    UL.pred = apply(as.matrix(data %>% select(contains("V"))),1,quantile,.975,na.rm=T)
+  )
+
+  
   if(mortality == "REM"){
     xs=as.matrix(xs)/as.matrix(data %>% select(starts_with("V")))
   }
@@ -520,7 +527,7 @@ compute.excess = function(data, mortality="REM", geo.name){
   }
   
 
-  
+  xs <- cbind(xs, sum.stats)
   return(xs)
 }
 
