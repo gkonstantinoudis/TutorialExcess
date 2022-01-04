@@ -36,7 +36,9 @@ DB$IT <- readRDS("Output/poisson_samples_all")
 
 # Read maps
 MAPS <- list()
-MAPS$IT <- st_read("data/ProvCM01012020_g_WGS84.shp") 
+mymap <- st_read("data/ProvCM01012020_g_WGS84.shp") 
+mymap <- st_transform(mymap, '+proj=longlat +datum=WGS84')
+MAPS$IT <- mymap 
 
 # Number of weeks
 n.weeks <- length(unique(DB$IT[[1]]$EURO_LABEL))
