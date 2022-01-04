@@ -34,11 +34,11 @@ pop20 = pop20 %>% select(`Codice provincia`, `Provincia`, `Totale Maschi`, `Tota
 
 pop20 %>% select(`Codice provincia`, `Provincia`, `Totale Maschi`, `Eta`) %>% 
   mutate(sex = "M") %>% 
-  rename(Value := `Totale Maschi`) %>% 
+  rename(pop := `Totale Maschi`) %>% 
   rbind(., 
         pop20 %>% select(`Codice provincia`, `Provincia`, `Totale Femmine`, `Eta`) %>% 
           mutate(sex = "F") %>% 
-          rename(Value := `Totale Femmine`)) %>% 
+          rename(pop := `Totale Femmine`)) %>% 
   rename(Code := `Codice provincia`, 
          Province = Provincia, 
          Age := `Eta`) -> pop20
@@ -89,6 +89,7 @@ pop15_19 <- rbind(pop.sex[[1]], pop.sex[[2]])
 # and make long format
 pop15_19 <- gather(pop15_19, Age, pop, `0`:`100`)
 colnames(pop15_19)[c(1:2)] <- c("Code", "Province")
+pop20$year <- 2020
 pop15_19 <- pop15_19[,colnames(pop20)]
 
 
