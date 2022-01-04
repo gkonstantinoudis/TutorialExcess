@@ -37,7 +37,6 @@ DB$IT <- readRDS("Output/poisson_samples_all")
 # Read maps
 MAPS <- list()
 mymap <- st_read("data/ProvCM01012020_g_WGS84.shp") 
-mymap <- st_transform(mymap, '+proj=longlat +datum=WGS84')
 MAPS$IT <- mymap 
 
 # Number of weeks
@@ -65,6 +64,11 @@ MAPS$IT <- list(
   region = MAPS$IT %>% group_by(NAMNUTS2) %>% summarise() %>% st_simplify(dTolerance = 500),
   province = MAPS$IT %>% select(ID_space, SIGLA, DEN_UTS) %>% st_simplify(dTolerance = 500)
 )
+
+# transform into lat long
+MAPS$IT$country <- st_transform(MAPS$IT$country, '+proj=longlat +datum=WGS84')
+MAPS$IT$region <- st_transform(MAPS$IT$region, '+proj=longlat +datum=WGS84')
+MAPS$IT$province <- st_transform(MAPS$IT$province, '+proj=longlat +datum=WGS84')
 
 # Add NAME
 MAPS$IT$country$NAME <- "Italy"
