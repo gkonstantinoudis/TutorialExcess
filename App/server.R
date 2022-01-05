@@ -104,11 +104,11 @@ server <- function(input, output, session) {
       )
 
      updateSelectInput(session, "sex", "Sex",
-       list("Females" = "F", "Males" = "M"), selected = "F")
+       list("Both" = "B", "Females" = "F", "Males" = "M"), selected = "F")
      updateSelectInput(session, "agegroup", "Age Group", 
        #c("All", "40<", "40-59", "60-69", "70-79", "80+"),
        #selected = "40<")
-       c( "40<", "40-59", "60-69", "70-79", "80+"),
+       c( "All", "40<", "40-59", "60-69", "70-79", "80+"),
        selected = "40-59")
 
     } else { # For all other tabs, use full options
