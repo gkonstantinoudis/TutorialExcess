@@ -108,8 +108,7 @@ server <- function(input, output, session) {
      updateSelectInput(session, "agegroup", "Age Group", 
        #c("All", "40<", "40-59", "60-69", "70-79", "80+"),
        #selected = "40<")
-       # 40< not shown but are included in 'All'
-       c( "40-59", "60-69", "70-79", "80+"),
+       c( "40<", "40-59", "60-69", "70-79", "80+"),
        selected = "40-59")
 
     } else { # For all other tabs, use full options
@@ -131,8 +130,7 @@ server <- function(input, output, session) {
      updateSelectInput(session, "agegroup", "Age Group",
        #c("All", "40<", "40-59", "60-69", "70-79", "80+"),
        #selected = "40<")
-       # 40< not shown but are included in 'All'
-       c("All", "40-59", "60-69", "70-79", "80+"),
+       c("All", "40<", "40-59", "60-69", "70-79", "80+"),
        selected = input$agegroup)
 
     }
@@ -272,7 +270,7 @@ server <- function(input, output, session) {
 
 
       if(input$aggregation == "country") geo.var <- "COUNTRY"
-      if(input$aggregation == "region") geo.var <- "RegionID"
+      if(input$aggregation == "region") geo.var <- "NAMNUTS2"
       if(input$aggregation == "province") geo.var <- "ID_space"
 
       # Produce plot
@@ -335,7 +333,6 @@ server <- function(input, output, session) {
   map_REM_pprob <- function(tab = NULL) {
 
     mymap <- get_age_sex_data()
-    mymap <- st_transform(mymap, '+proj=longlat +datum=WGS84')
 
     popup <- create_popup (mymap, tab)
   
@@ -362,7 +359,6 @@ server <- function(input, output, session) {
   # tab: Tab for popups
   map_NED_median <- function(tab = NULL) {
     mymap <- get_age_sex_data()
-    mymap <- st_transform(mymap, '+proj=longlat +datum=WGS84')
     
     colors <- c(rev(brewer.pal(n = 8, name = "RdBu")))
     labels <- levels(mymap$median.NED.cat)
@@ -381,7 +377,6 @@ server <- function(input, output, session) {
   # tab: Tab for popups
   map_NED_pprob <- function(tab = NULL) {
     mymap <- get_age_sex_data()
-    mymap <- st_transform(mymap, '+proj=longlat +datum=WGS84')
 
     popup <- create_popup (mymap, tab)
 
@@ -569,28 +564,6 @@ server <- function(input, output, session) {
     }
 
     return(the_plot)
-
-
-#     kk <-  map_REM_median(tab)
-#     return(kk)
-#
-#     plts <- create_popup(map, tab)
-#
-#     colors <- c(rev(brewer.pal(n = 6, name = "RdBu")))
-#     labels <- levels(map$Median.cat)
-#     factpal <- colorFactor(colors, map$Median.cat)
-#    
-#      res <- leaflet(map) %>% 
-#      addProviderTiles(leaflet_tiles,
-#          options = providerTileOptions(opacity = 0.99))  %>% 
-#      addPolygons(fillColor = ~ factpal(Median.cat), weight = 1, opacity = 1, color = "black", fillOpacity = 0.75, popup = plts, highlightOptions = h_options) %>%   
-#      leaflet::addLegend("topright", colors = colors, labels = labels,
-#         values = values)
-#    
-#    return(res)
-#
-
-
   })
 
 
