@@ -13,7 +13,6 @@ library(INLA)
 library(dplyr)
 library(sf)
 library(spdep)
-library(xtable)
 
 
 
