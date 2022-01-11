@@ -153,8 +153,10 @@ GetTemperature <-
 
 
 GetTemperature <- do.call(rbind, GetTemperature)
+
 GetTemperature %>% 
-  mutate(ID = group_indices(., lon, lat)) -> GetTemperature
+  group_by(lon, lat) %>% 
+  mutate(ID = cur_group_id()) -> GetTemperature
 
 
 # Now we need the shp in Italy.
@@ -212,7 +214,8 @@ mun$IDSpace <- as.character(mun$IDSpace)
 
 # Work on data.table to speed up the filter() computation (line 240)
 GetTemperature_tmp <- as.data.table(GetTemperature_tmp)
-  
+colnames(GetTemperature_tmp)[c(5,6)] <- c("X", "Y")
+
 pblapply(1:length(loopID), function(X){
   
   i <- X
