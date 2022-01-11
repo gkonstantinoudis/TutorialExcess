@@ -25,4 +25,4 @@ The output folder includes:
 * EUROSTAT_ISO: the iso weeks during 2015-2020
 * The 4 manuscript figures: PopulationPlot.png, ERAPOINTS.png, PCpriors.png, SpatiotemporalRegions.png and PosteriorProb.png
 
-Download the folders, unzip and put it in your working directory. You can skip download the Output file, as all the files there can be downloaded following the instruction of the Rfiles. 
+Download the folders, unzip and put it in your working directory. You can skip downloading the Output file, as all the files there can be downloaded following the instruction of the Rfiles. 
