@@ -95,6 +95,7 @@ library(patchwork)
 library(dplyr)
 library(stringr)
 library(data.table)
+library(tibble)
 
 # read the files
 temperature <- nc_open("Output/temperature2015_2020_Italy.nc")
@@ -166,6 +167,7 @@ mun <- read_sf("data/ProvCM01012020_g_WGS84.shp")
 DT_sf <- st_as_sf(GetTemperature[, c("lon", "lat")], coords = c("lon", "lat"), crs = 4326)
 DT_sf <- st_transform(DT_sf, crs = st_crs(mun))
 DT_sf <- st_coordinates(DT_sf)
+DT_sf <- as.data.frame(DT_sf)
 
 GetTemperature <- cbind(GetTemperature, DT_sf)
 
@@ -214,7 +216,6 @@ mun$IDSpace <- as.character(mun$IDSpace)
 
 # Work on data.table to speed up the filter() computation (line 240)
 GetTemperature_tmp <- as.data.table(GetTemperature_tmp)
-colnames(GetTemperature_tmp)[c(5,6)] <- c("X", "Y")
 
 pblapply(1:length(loopID), function(X){
   
@@ -275,7 +276,7 @@ gplot_data <- function(x, maxpixels = 50000)  {
   dat <- utils::stack(as.data.frame(raster::getValues(x))) 
   names(dat) <- c('value', 'variable')
   
-  dat <- dplyr::as.tbl(data.frame(coords, dat))
+  dat <- tibble::as_tibble(data.frame(coords, dat))
   
   if (!is.null(levels(x))) {
     dat <- dplyr::left_join(dat, levels(x)[[1]], 
