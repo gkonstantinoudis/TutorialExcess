@@ -28,13 +28,14 @@ deaths <- read_csv("data/comuni_giornaliero_31gennaio21.csv")
 # subset the dataset
 deaths %>% select_at(
   vars("PROV", "NOME_PROVINCIA", "CL_ETA", "GE",
-                  paste0("M_", 15:21), 
-                  paste0("F_", 15:21))
+                  paste0("M_", 14:21), 
+                  paste0("F_", 14:21))
   ) -> deaths
 
 
 # Change to long format
-deaths <- gather(deaths, agesex, deaths, M_15:F_21, factor_key=TRUE)
+deaths <- gather(deaths, agesex, deaths, M_14:F_21, factor_key=TRUE)
+
 deaths %>% mutate(
   sex = substr(agesex, start = 1, stop = 1),
   year = as.numeric(paste0("20",substr(agesex, start = 3, stop = 4)))
@@ -88,6 +89,8 @@ deaths %>% mutate(
 
 deaths <- deaths[!is.na(deaths$date),] # the NAs are "false" leap years
 
+# keep everything after 2014-12-29, as it is the first day of the first ISO week in 2015
+deaths %>% filter(date>="2014-12-29") -> deaths
 
 # ISO weeks file
 EUROSTAT_ISO <- readRDS("Output/EUROSTAT_ISO")
@@ -95,7 +98,6 @@ EUROSTAT_ISO <- readRDS("Output/EUROSTAT_ISO")
 # merge the EUROSTAT_ISO with the deaths
 deaths <- left_join(deaths, EUROSTAT_ISO, by = c("date" = "EURO_TIME"))
 deaths <- deaths[!is.na(deaths$EURO_LABEL),]
-max(deaths$date)
 
 
 # Aggregate by ISO week and age group
@@ -103,8 +105,6 @@ deaths %>% select(PROV, NOME_PROVINCIA, sex, ageg, EURO_LABEL, deaths) %>%
   group_by(PROV, NOME_PROVINCIA, sex, ageg, EURO_LABEL) %>% 
   summarise(deaths = sum(as.numeric(deaths), na.rm = TRUE)) -> tmp
 
-
-107*length(unique(EUROSTAT_ISO$EURO_LABEL))*5*2
 
 # the numbers do not add up because some dates from the original file are
 # missing. I will assume that these dates have 0 death counts.
