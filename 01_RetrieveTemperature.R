@@ -38,7 +38,7 @@ request <- list(
   product_type   = "reanalysis",
   format = "netcdf",
   variable = "2m_temperature",
-  date = "2015-01-01/2021-01-03", # this is to match the ISO weeks
+  date = "2014-12-28/2021-01-03", # this is to match the ISO weeks
   time = c("00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", 
            "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", 
            "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"),
@@ -107,15 +107,20 @@ lat <- ncvar_get(temperature,"latitude")
 hour <- ncvar_get(temperature,"time")
 # hours since 1900-01-01
 hour_tr <- as.POSIXct(hour*3600, origin="1900-01-01 00:00")
-hour_tr <- format(as.POSIXct(hour_tr,format='%Y-%m-%d %H:%M:%S GMT'),format='%Y-%m-%d', tz = "Europe/London")
 
+# set the correct timezone for Italy
+hour_tr <- format(as.POSIXct(hour_tr,format='%Y-%m-%d %H:%M:%S GMT'),format='%Y-%m-%d', tz = "Europe/Berlin")
+
+# and from this string we need to remove the dates outside the 2015-2020 ISO weeks, ie everything before 2014-12-29 and
+# after 2021-01-03
+extr.tmp[,,hour_tr>="2014-12-29" & hour_tr<="2021-01-03"] -> tmp
+hour_tr[hour_tr>="2014-12-29" & hour_tr<="2021-01-03"] -> hour_tr
 dat <- data.frame(start = seq(from = 1, to = length(hour_tr), by = 24), 
                   stop = seq(from = 24, to = length(hour_tr), by = 24))
 
 un.hour <- unique(hour_tr)
 un.hour <- un.hour[order(un.hour)]
 dat$date <- un.hour
-
 
 
 # function to retrieve daily mean
