@@ -107,9 +107,15 @@ lat <- ncvar_get(temperature,"latitude")
 hour <- ncvar_get(temperature,"time")
 # hours since 1900-01-01
 hour_tr <- as.POSIXct(hour*3600, origin="1900-01-01 00:00")
+# Set time zone (UTC)
+attr(hour_tr, "tzone") <- "UTC"
 
 # set the correct timezone for Italy
-hour_tr <- format(as.POSIXct(hour_tr,format='%Y-%m-%d %H:%M:%S GMT'),format='%Y-%m-%d', tz = "Europe/Berlin")
+#hour_tr <- format(as.POSIXct(hour_tr,format='%Y-%m-%d %H:%M:%S GMT'),format='%Y-%m-%d', tz = "Europe/Rome")
+# Check with date AND time that convertion between time zones works
+#  format(hour_tr, format='%Y-%m-%d %H:%M:%S', tz = "Europe/Rome")
+hour_tr <- format(hour_tr, format='%Y-%m-%d', tz = "Europe/Rome")
+
 
 # and from this string we need to remove the dates outside the 2015-2020 ISO weeks, ie everything before 2014-12-29 and
 # after 2021-01-03
