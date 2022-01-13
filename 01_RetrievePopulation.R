@@ -16,7 +16,7 @@ library(spdep)
 library(readr)
 library(tidyr)
 
-
+options(encoding = "ISO-8859-1")
 
 # Population for January 1st 2020 can be downloaded from: https://demo.istat.it/popres/download.php?anno=2020&lingua=ita
 # selecting Province on the bottom right of the page. Save this object as POP2020 on the data folder.  
