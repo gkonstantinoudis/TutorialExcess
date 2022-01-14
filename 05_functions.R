@@ -18,7 +18,7 @@ get2020data = function(post.samples = pois.samples.list, geo.res, link_table=NUL
   # link_table is a data frame with NAMNUTS2 (name NUTS2 region) and ID_space (ID of the NUTS3 region as given in the finaldb)
   # and NAMNUTS2 (the NUTS2 region ID)
 
-  
+  # this line is in case we want to exclude 40< that have the lowest predictive ability
   if(length(post.samples) == 8){
     groups4cv <- as.data.frame(expand.grid(age = c("40-59", "60-69", "70-79", "80+"),
                                            sex = c("F", "M")))
@@ -268,6 +268,7 @@ get2020weeklydata = function(post.samples = pois.samples.list, geo.res, link_tab
   # link_table is a data frame with ID_space (province code) and NAMNUTS2 (region name). required only if geo.res="region"
   # groups4cv is the data frame with the 10 combinations of age x sex groups
   
+  # this line is in case we want to exclude 40< that have the lowest predictive ability
   if(length(post.samples) == 8){
     groups4cv <- as.data.frame(expand.grid(age = c("40-59", "60-69", "70-79", "80+"),
                                            sex = c("F", "M")))
@@ -295,8 +296,14 @@ get2020weeklydata = function(post.samples = pois.samples.list, geo.res, link_tab
       X <- data.frame(ID_space = X$ID_space, observed = X$deaths, EURO_LABEL=X$EURO_LABEL)
       return(X)
     }) -> list.observed
-  }
   
+    pblapply(post.samples, function(X){
+      X <- data.frame(ID_space = X$ID_space, population = X$population, EURO_LABEL=X$EURO_LABEL)
+      return(X)
+    }) -> list.population
+ }
+  
+
   # For each i in 1:10 aggregate predicted/observed values by region 
   if(geo.res == "region"){
     pblapply(post.samples, function(X){
@@ -310,8 +317,6 @@ get2020weeklydata = function(post.samples = pois.samples.list, geo.res, link_tab
         summarise_all(sum) %>% 
         ungroup() -> X
       X <- as.data.frame(X)
-      #X[,-1] <- apply(X[,-1], 2, as.numeric)
-      
       return(X)
       
     }) -> list.sum.deaths
@@ -327,6 +332,18 @@ get2020weeklydata = function(post.samples = pois.samples.list, geo.res, link_tab
       Y$observed <- as.numeric(Y$observed)
       return(Y)
     }) -> list.observed
+    
+    pblapply(post.samples, function(X){
+      X <- data.frame(ID_space = X$ID_space, population = X$population,EURO_LABEL=X$EURO_LABEL)
+      X <- left_join(X, link_table, by = c("ID_space"))
+      
+      X %>% 
+        group_by(NAMNUTS2,EURO_LABEL) %>%
+        summarise(population = sum(population)) %>% 
+        ungroup() -> Y
+      Y$population <- as.numeric(Y$population)
+      return(Y)
+    }) -> list.population
   }
   
   # For each i in 1:10 aggregate predicted/observed values to get the total for the country
@@ -351,6 +368,15 @@ get2020weeklydata = function(post.samples = pois.samples.list, geo.res, link_tab
       Y$COUNTRY = "Italy"
       return(Y)
     }) -> list.observed
+    
+    pblapply(post.samples, function(X){
+      X %>% 
+        group_by(EURO_LABEL) %>% 
+        summarise(population = sum(population)) %>% 
+        ungroup() -> Y
+      Y$COUNTRY = "Italy"
+      return(Y)
+    }) -> list.population
   }
   
   # Aggregate by age and sex  
@@ -371,7 +397,15 @@ get2020weeklydata = function(post.samples = pois.samples.list, geo.res, link_tab
     if(geo.res=="region") sum.observed$NAMNUTS2 <- list.observed[[1]]$NAMNUTS2
     if(geo.res=="country") sum.observed$COUNTRY <- "Italy"
     
+    sum.population <- Reduce("+", lapply(list.population,
+                                       function(X) select(X,population)))
+    sum.population$EURO_LABEL = list.population[[1]]$EURO_LABEL
+    if(geo.res=="province") sum.population$ID_space <- list.population[[1]]$ID_space
+    if(geo.res=="region") sum.population$NAMNUTS2 <- list.population[[1]]$NAMNUTS2
+    if(geo.res=="country") sum.population$COUNTRY <- "Italy"
+    
     #sum.deaths.obs = left_join(sum.deaths, sum.observed) #memory exhausted
+    sum.observed <- left_join(sum.observed, sum.population)
     sum.deaths.obs = data.frame(sum.deaths,sum.observed)
     sum.deaths.obs = sum.deaths.obs %>% select(-ends_with(".1"))
     out = sum.deaths.obs
@@ -401,7 +435,15 @@ get2020weeklydata = function(post.samples = pois.samples.list, geo.res, link_tab
       if(geo.res=="region") sum.observed$NAMNUTS2 <- list.observed[[1]]$NAMNUTS2
       if(geo.res=="country") sum.observed$COUNTRY <- "Italy"
       
+      sum.population <- Reduce("+", lapply(list.population,
+                                           function(X) select(X,population)))
+      sum.population$EURO_LABEL = list.population[[1]]$EURO_LABEL
+      if(geo.res=="province") sum.population$ID_space <- list.population[[1]]$ID_space
+      if(geo.res=="region") sum.population$NAMNUTS2 <- list.population[[1]]$NAMNUTS2
+      if(geo.res=="country") sum.population$COUNTRY <- "Italy"
+      
       #sum.deaths.obs = left_join(sum.deaths, sum.observed) #memory exhausted
+      sum.observed <- left_join(sum.observed, sum.population)
       sum.deaths.obs = data.frame(sum.deaths,sum.observed)
       sum.deaths.obs = sum.deaths.obs %>% select(-ends_with(".1"))
       out[[i]] = sum.deaths.obs
@@ -432,9 +474,17 @@ get2020weeklydata = function(post.samples = pois.samples.list, geo.res, link_tab
       if(geo.res=="region") sum.observed$NAMNUTS2 <- list.observed[[1]]$NAMNUTS2
       if(geo.res=="country") sum.observed$COUNTRY <- "Italy"
       
-      #sum.deaths.obs = left_join(sum.deaths, sum.observed)
-      sum.deaths.obs = data.frame(sum.deaths,sum.observed)
-      sum.deaths.obs = sum.deaths.obs %>% select(- ends_with(".1"))
+      sum.population <- Reduce("+", lapply(list.population,
+                                           function(X) select(X,population)))
+      sum.population$EURO_LABEL = list.population[[1]]$EURO_LABEL
+      if(geo.res=="province") sum.population$ID_space <- list.population[[1]]$ID_space
+      if(geo.res=="region") sum.population$NAMNUTS2 <- list.population[[1]]$NAMNUTS2
+      if(geo.res=="country") sum.population$COUNTRY <- "Italy"
+      
+      #sum.deaths.obs = left_join(sum.deaths, sum.observed) #memory exhausted
+      sum.observed <- left_join(sum.observed, sum.population)
+      sum.deaths.obs = data.frame(sum.deaths, sum.observed)
+      sum.deaths.obs = sum.deaths.obs %>% select(-ends_with(".1"))
       out[[i]] = sum.deaths.obs
     }
     names(out) = levels(groups4cv$age)
@@ -446,7 +496,7 @@ get2020weeklydata = function(post.samples = pois.samples.list, geo.res, link_tab
   if(stratify.by == "agesex"){
     
     #out = Map(dplyr::left_join, list.sum.deaths, list.observed)
-    out = Map(data.frame, list.sum.deaths, list.observed)
+    out = Map(data.frame, list.sum.deaths, list.observed, list.population)
     out = lapply(out,function(X) {X=X %>% select(-ends_with(".1"))})
     
     names(out) = paste0(groups4cv$sex,groups4cv$age)

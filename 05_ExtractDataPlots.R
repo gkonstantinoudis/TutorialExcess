@@ -148,6 +148,7 @@ names(d) <- geo.res
 
 
 
+
 d_week <- lapply(geo.res, function(GEO) {
   res <- lapply(strata, function(STRATA) {
     aux <- get2020weeklydata(DB$IT, geo.res = GEO, link_table = link_table,
@@ -159,7 +160,6 @@ d_week <- lapply(geo.res, function(GEO) {
     if(GEO == "province") geo.name <- "ID_space"
     
     if(STRATA == "none") {
-      aux$COUNTRY <- "Italy"
       aux2 <- compute.excess(aux, mortality="REM", geo.name = geo.name)
       aux3 <- compute.excess(aux, mortality="NED", geo.name = geo.name)
 
@@ -206,6 +206,9 @@ save(file = "Output/Italy.RData", list = c("d", "d_week"))
 
 names(d)
 names(d$province)
+names(d$province$age)
+names(d$province$sex)
+names(d$province$agesex)
 head(d$province$none)
 
 
@@ -214,7 +217,6 @@ head(d$province$none)
 ################################################################
 ################################################################
 ################################################################
-
 
 
 
