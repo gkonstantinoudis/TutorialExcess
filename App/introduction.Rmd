@@ -11,7 +11,7 @@ output: html_document
 
 # Introduction
 
-This Shiny App is part of the supplementary materials of paper *A framework for estimating excess mortality during the COVID-19 pandemic* by *G. Konstantinoudis et al. (2022)*. This paper illustrates the use of the R programming language to estimate the excess mortality caused by the COVID-19 pandemic during 2020 in Italy. Hence, it provides a framework for estimating excess mortality for any other countries. The paper is currently available as a [pre-print]() and it is a follow-up paper of the paper by *G. Konstantinoudis et al. (2022)*, available as a [pre-print](https://www.medrxiv.org/content/10.1101/2021.10.18.21264686v1). 
+This Shiny App is part of the supplementary materials of paper *A framework for estimating excess mortality during the COVID-19 pandemic* by *G. Konstantinoudis et al. (2022)*. This paper illustrates the use of the R programming language to estimate the excess mortality caused by the COVID-19 pandemic during 2020 in Italy. Hence, it provides a framework for estimating excess mortality for any other countries. The paper is currently available as a [pre-print](https://arxiv.org/abs/2201.06458) and it is a follow-up paper of the paper by *G. Konstantinoudis et al. (2022)*, available as a [pre-print](https://www.medrxiv.org/content/10.1101/2021.10.18.21264686v1). 
 
 <center>![Portada del atlas](www/intro_image.png)</center>
 
