@@ -9,7 +9,7 @@
 
 #---------------------------------------------------------------------------------
 
-
+# load packages
 library(sp)
 library(sf)
 library(xts)
@@ -50,14 +50,14 @@ link_table = readRDS("data/link_table")
 
 
 # Load functions 
-source("05_functions.R")
+source("05-02_functions.R")
 
 
 # Merge map and link table
-MAPS$IT <- left_join(MAPS$IT, link_table, by.x = "SIGLA", by.y = "SIGLA")
+MAPS$IT <- left_join(MAPS$IT, link_table, by = "SIGLA")
 MAPS$IT$COUNTRY <- "Italy"
 
-
+MAPS$IT %>% mutate(DEN_UTS = DEN_UTS.x) %>% select(-DEN_UTS.y, -DEN_UTS.x) -> MAPS$IT
 
 MAPS$IT <- list(
   country = MAPS$IT %>% group_by(COUNTRY) %>% summarise() %>% st_simplify(dTolerance = 500),

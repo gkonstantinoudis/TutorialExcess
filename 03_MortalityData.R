@@ -107,7 +107,7 @@ deaths %>% select(PROV, NOME_PROVINCIA, sex, ageg, EURO_LABEL, deaths) %>%
 
 
 # the numbers do not add up because some dates from the original file are
-# missing. I will assume that these dates have 0 death counts.
+# missing. These dates have 0 death counts.
 
 expand.grid(
   PROV = unique(deaths$PROV), 
@@ -126,7 +126,6 @@ sum(is.na(findata)) # no NAs
 
 
 # Now link the findata with temperature, holidays and population.
-
 temperature <- readRDS("Output/TemperatureWeeklyItaly")
 holidays <- readRDS("Output/holiday_df")
 population <- readRDS("Output/pop_weekly")

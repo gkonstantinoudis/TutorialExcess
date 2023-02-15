@@ -1,5 +1,5 @@
-# Run this script first in order to install all the required packages
-
+# This script contains information about the packages used for the analysis. 
+# Run this script first in order to install all the required packages.
 
 pkgs <- c("dplyr", "ecmwfr", "FNN", "ggplot2", "grid", "lctools", "lubridate", 
   "maptools", "ncdf4", "patchwork", "pbapply", "plotly", "plyr", 
@@ -8,6 +8,6 @@ pkgs <- c("dplyr", "ecmwfr", "FNN", "ggplot2", "grid", "lctools", "lubridate",
   "timeDate", "viridis", "xtable", "xts", "data.table", "tibble")
 install.packages(pkgs, dep = TRUE)
 
-# Install INLA (off CRAN)
+# Install the INLA package (off CRAN)
 install.packages("INLA", repos = c(getOption("repos"), 
   INLA = "https://inla.r-inla-download.org/R/stable"), dep = TRUE)

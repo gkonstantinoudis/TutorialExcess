@@ -15,7 +15,6 @@ library(sf)
 library(spdep)
 
 
-
 ################################################################################
 # Cross validation functions
 ################################################################################
@@ -106,11 +105,10 @@ nb2INLA("W.adj", W.nb)
 
 
 # set up formula and priors
-
 formula = 
-  deaths ~ 1 + offset(log(population)) + hol + 
+  deaths ~ 1 + offset(log(population)) + hol + id.year + 
   f(id.tmp, model='rw2', hyper=hyper.iid, constr = TRUE, scale.model = TRUE) +
-  f(id.year, model='iid', hyper=hyper.iid, constr = TRUE) + 
+  f(id.wkes, model='iid', hyper=hyper.iid, constr = TRUE) + 
   f(id.time, model='rw1', hyper=hyper.iid, constr = TRUE, scale.model = TRUE, cyclic = TRUE) +
   f(id.space, model='bym2', graph="W.adj", scale.model = TRUE, constr = TRUE, hyper = hyper.bym)
 
@@ -142,12 +140,13 @@ for(j in 1:nrow(groups4cv)){
   data$id.time <- as.numeric(substr(data$EURO_LABEL, start = 7, stop = 8))
   data$id.tmp <- inla.group(data$mean.temp, n = 100, method = "cut", idx.only = TRUE)
   data$id.year <- data$year - 2014
+  data$id.wkes <- as.numeric(factor(data$EURO_LABEL))
   data <- data[order(data$id.space),]
   
   data %>% filter((ageg %in% agegroup) & (sex %in% sexg)) -> datCV_firslop
   
   list.CV.results.spacetime <- list()
-  
+
   for(i in 1:5){
     datCV <- datCV_firslop
     testIndexes <- which(datCV$year %in% years[i], arr.ind=TRUE)
@@ -155,7 +154,7 @@ for(j in 1:nrow(groups4cv)){
     
     list.CV.results.spacetime[[i]] <- inla.cv(Y = formula)
     gc()
-    
+
   }
   
   saveRDS(list.CV.results.spacetime,

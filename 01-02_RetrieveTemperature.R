@@ -78,7 +78,7 @@ if(!file.exists("Output/temperature2015_2020_Italy.nc")) {
 
 # Step 2. Clean the temperature file
 
-
+# load packages
 library(ncdf4)
 library(plyr)
 library(tidyr)
@@ -101,11 +101,12 @@ library(tibble)
 temperature <- nc_open("Output/temperature2015_2020_Italy.nc")
 extr.tmp <- ncvar_get(temperature, varid="t2m")
 
-# extract space and time
+# extract space 
 lon <- ncvar_get(temperature,"longitude")
 lat <- ncvar_get(temperature,"latitude")
+# and time
 hour <- ncvar_get(temperature,"time")
-# hours since 1900-01-01
+# the format is hours since 1900-01-01:
 hour_tr <- as.POSIXct(hour*3600, origin="1900-01-01 00:00")
 # Set time zone (UTC)
 attr(hour_tr, "tzone") <- "UTC"
@@ -150,7 +151,7 @@ DailyMean <- function(start, stop, date){
   return(mat2store)
 }
 
-
+# run the DailyMean funciton across the data
 GetTemperature <- 
   pbapply(dat, 1, function(X){
     
@@ -163,6 +164,7 @@ GetTemperature <-
 
 GetTemperature <- do.call(rbind, GetTemperature)
 
+# create and id by latitude and longitude
 GetTemperature %>% 
   group_by(lon, lat) %>% 
   mutate(ID = cur_group_id()) -> GetTemperature
@@ -222,7 +224,7 @@ loopID <- unique(GetTemperature_tmp$EURO_LABEL)
 mun$IDSpace <- 1:nrow(mun)
 mun$IDSpace <- as.character(mun$IDSpace)
 
-# Work on data.table to speed up the filter() computation (line 240)
+# Work on data.table to speed up the filter() computation 
 GetTemperature_tmp <- as.data.table(GetTemperature_tmp)
 
 pblapply(1:length(loopID), function(X){

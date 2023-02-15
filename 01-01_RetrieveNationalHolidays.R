@@ -7,11 +7,13 @@
 
 #---------------------------------------------------------------------------------
 
+# load packages
 library(timeDate)
 library(lubridate)
 library(dplyr)
 
-
+# Here we extract the date of the main national holidays in Italy for the selected years. For instance
+# Easter(2015), gives the date of the Easter in 2015.
 holidays_vec = sort(c(
     ymd(NewYearsDay(2015:2021)),
     ymd(ITEpiphany(2015:2020)),
@@ -25,6 +27,7 @@ holidays_vec = sort(c(
 )
 )
 
+# put the data in a data.frame format
 holiday_df = data.frame(Data = holidays_vec)
 holiday_df$Week = isoweek(holiday_df$Data)
 holiday_df$Year = year(holiday_df$Data)
@@ -37,7 +40,7 @@ holiday_df$Year[which(holiday_df$Data == "2021-01-01")] = 2020
 holiday_df = holiday_df %>% 
   mutate(EURO_LABEL = paste0(Year, "-W", sprintf("%02d", Week)))
 
-
+# store output
 saveRDS(holiday_df, file="Output/holiday_df")
 
 
