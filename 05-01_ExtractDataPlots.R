@@ -9,7 +9,7 @@
 
 #---------------------------------------------------------------------------------
 
-
+# load packages
 library(sp)
 library(sf)
 library(xts)
@@ -50,14 +50,14 @@ link_table = readRDS("data/link_table")
 
 
 # Load functions 
-source("05_functions.R")
+source("05-02_functions.R")
 
 
 # Merge map and link table
-MAPS$IT <- left_join(MAPS$IT, link_table, by.x = "SIGLA", by.y = "SIGLA")
+MAPS$IT <- left_join(MAPS$IT, link_table, by = "SIGLA")
 MAPS$IT$COUNTRY <- "Italy"
 
-
+MAPS$IT %>% mutate(DEN_UTS = DEN_UTS.x) %>% select(-DEN_UTS.y, -DEN_UTS.x) -> MAPS$IT
 
 MAPS$IT <- list(
   country = MAPS$IT %>% group_by(COUNTRY) %>% summarise() %>% st_simplify(dTolerance = 500),
@@ -91,6 +91,9 @@ rescale_REM <- function(obj) {
 }
 
 
+# Extract the data for all age*sex strata and spatial resolution as defined above, i.e.
+# strata <-  c("none","age","sex","agesex")  and geo.res = c("province", "region", "country")
+# when the temporal aggregation is the 2020 (yearly total).
 
 d <- lapply(geo.res, function(GEO) {
   res <- lapply(strata, function(STRATA) {
@@ -148,6 +151,9 @@ names(d) <- geo.res
 
 
 
+# Extract the data for all age*sex strata and spatial resolution as defined above, i.e.
+# strata <-  c("none","age","sex","agesex")  and geo.res = c("province", "region", "country")
+# when the temporal aggregation is weeks.
 
 d_week <- lapply(geo.res, function(GEO) {
   res <- lapply(strata, function(STRATA) {

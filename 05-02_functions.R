@@ -559,7 +559,7 @@ compute.excess = function(data, mortality="REM", geo.name){
   
   xs$exceedance.REM.cat = cut(xs$exceedance.REM, 
                   breaks = c(-0.01, 0.05, 0.20, 0.80, 0.95, 1.01),
-                  labels = c("[0, 0.05]", "(0.05, 0.2]", "(0.2, 0.8]", "(0.8, 0.95]", "(0.8, 1]"),
+                  labels = c("[0, 0.05]", "(0.05, 0.2]", "(0.2, 0.8]", "(0.8, 0.95]", "(0.95, 1]"),
                   include.lowest = FALSE, right = FALSE)
   }
   
@@ -572,7 +572,7 @@ compute.excess = function(data, mortality="REM", geo.name){
   
   xs$exceedance.NED.cat = cut(xs$exceedance.NED, 
                   breaks = c(-0.01, 0.05, 0.20, 0.80, 0.95, 1.01),
-                  labels = c("[0, 0.05]", "(0.05, 0.2]", "(0.2, 0.8]", "(0.8, 0.95]", "(0.8, 1]"),
+                  labels = c("[0, 0.05]", "(0.05, 0.2]", "(0.2, 0.8]", "(0.8, 0.95]", "(0.95, 1]"),
                   include.lowest = FALSE, right = FALSE)
   }
   

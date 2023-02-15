@@ -32,7 +32,7 @@ shp %>% left_join(., link_table, by = c("SIGLA" = "SIGLA")) %>%
   summarise() -> shp_NUTS2
   
 
-# get the iso correspondance between months for the xaxis
+# get the iso correspondence between months for the xaxis
 
 date.iso <- data.frame(
   iso = rep(d_week$country$sex$F$EURO_LABEL, each = 7),
@@ -55,10 +55,11 @@ b <- b[!duplicated(b$month_nam),]
 
 colors <- rev(brewer.pal(n = 10, name = "RdBu")[1:6])
 col.highlight <- "blue"
+col.highlight.cex <- 0.6
 
 # First pannel
 ggplot(d$country$none) + geom_sf(data = d$country$none, aes(fill = median.REM.cat), size = 0.4) + 
-  geom_sf(fill = NA, col = col.highlight, size = 0.6) + 
+  geom_sf(fill = NA, col = col.highlight, linewidth = col.highlight.cex) + 
   scale_fill_manual(values=colors, name = "", drop=FALSE) + theme_light() +
   ggtitle("1A. National") + 
   theme(text = element_text(size = 6),  
@@ -76,7 +77,7 @@ d_week$country$sex$M %>%
   geom_point(aes(x = x, y = median.REM), size = 0.8) + 
   geom_ribbon(aes(x = x, ymin = LL.REM, ymax = UL.REM), alpha = 0.3, fill = viridis(15)[6]) +
   geom_hline(yintercept = 0, col = "red", linetype = 2) + 
-  theme_light() + ylim(c(-50, 180)) + ggtitle("1B. Males") + ylab("") + xlab("") + 
+  theme_light() + ylim(c(-50, 200)) + ggtitle("1B. Males") + ylab("") + xlab("") + 
   scale_x_continuous(minor_breaks = NULL, breaks = b$x, labels = b$month_nam) + 
   theme(text = element_text(size = 6),  
         legend.key.height = unit(0.3, 'cm'),
@@ -92,7 +93,7 @@ d_week$country$sex$F %>% mutate(x = as.numeric(as.factor(EURO_LABEL))) %>%
   geom_point(aes(x = x, y = median.REM), size = 0.8) + 
   geom_ribbon(aes(x = x, ymin = LL.REM, ymax = UL.REM), alpha = 0.3, fill = viridis(15)[6]) +
   geom_hline(yintercept = 0, col = "red", linetype = 2) + 
-  theme_light() + ylim(c(-50, 180)) + ggtitle("1C. Females") + ylab("") + xlab("") + 
+  theme_light() + ylim(c(-50, 200)) + ggtitle("1C. Females") + ylab("") + xlab("") + 
   scale_x_continuous(minor_breaks = NULL, breaks = b$x, labels = b$month_nam) + 
   theme(text = element_text(size = 6),  
         legend.key.height = unit(0.3, 'cm'),
@@ -118,7 +119,7 @@ d$region$none %>% filter(NAMNUTS2 %in% region) %>%
   select(geometry) %>% 
 ggplot() +  
   geom_sf(data = d$region$none, aes(fill = median.REM.cat), size = 0.4) + 
-  geom_sf(fill = NA, col = col.highlight, size = 0.6) + 
+  geom_sf(fill = NA, col = col.highlight, linewidth = col.highlight.cex) + 
   scale_fill_manual(values=colors, name = "", drop=FALSE) + theme_light() + 
   ggtitle(paste0("2A. NUTS2 regions: ", region)) + 
   theme(text = element_text(size = 6),  
@@ -135,7 +136,7 @@ d_week$region$sex$M %>% filter(NAMNUTS2 %in% region) %>%
   geom_point(aes(x = x, y = median.REM), size = 0.8) + 
   geom_ribbon(aes(x = x, ymin = LL.REM, ymax = UL.REM), alpha = 0.3, fill = viridis(15)[6]) +
   geom_hline(yintercept = 0, col = "red", linetype = 2) + 
-  theme_light() + ylim(c(-50, 180)) + ggtitle("2B. Males") + ylab("") + xlab("") + 
+  theme_light() + ylim(c(-50, 200)) + ggtitle("2B. Males") + ylab("") + xlab("") + 
   scale_x_continuous(minor_breaks = NULL, breaks = b$x, labels = b$month_nam) + 
   theme(text = element_text(size = 6),  
         legend.key.height = unit(0.3, 'cm'),
@@ -152,7 +153,7 @@ d_week$region$sex$F %>% filter(NAMNUTS2 %in% region) %>%
   geom_point(aes(x = x, y = median.REM), size = 0.8) + 
   geom_ribbon(aes(x = x, ymin = LL.REM, ymax = UL.REM), alpha = 0.3, fill = viridis(15)[6]) +
   geom_hline(yintercept = 0, col = "red", linetype = 2) + 
-  theme_light() + ylim(c(-50, 180)) + ggtitle("2C. Females") + ylab("") + xlab("") + 
+  theme_light() + ylim(c(-50, 200)) + ggtitle("2C. Females") + ylab("") + xlab("") + 
   scale_x_continuous(minor_breaks = NULL, breaks = b$x, labels = b$month_nam) + 
   theme(text = element_text(size = 6),  
         legend.key.height = unit(0.3, 'cm'),
@@ -181,7 +182,7 @@ d$province$none %>% filter(DEN_UTS == prov) %>%
   select(geometry) %>% 
   ggplot() +  
   geom_sf(data = d$province$none, aes(fill = median.REM.cat), size = 0.4) + 
-  geom_sf(fill = NA, col = col.highlight, size = .6) + 
+  geom_sf(fill = NA, col = col.highlight, linewidth = col.highlight.cex) + 
   scale_fill_manual(values=colors, name = "", drop=FALSE) + theme_light() +
   ggtitle(paste0("3A. NUTS3 regions: ", prov)) + 
   theme(text = element_text(size = 6),  
@@ -202,7 +203,7 @@ d_week$province$sex$M %>% filter(ID_space %in% prov) %>%
   geom_point(aes(x = x, y = median.REM), size = 0.8) + 
   geom_ribbon(aes(x = x, ymin = LL.REM, ymax = UL.REM), alpha = 0.3, fill = viridis(15)[6]) +
   geom_hline(yintercept = 0, col = "red", linetype = 2) + 
-  theme_light() + ylim(c(-50, 180)) + ggtitle("3B. Males") + ylab("") + xlab("") + 
+  theme_light() + ylim(c(-50, 200)) + ggtitle("3B. Males") + ylab("") + xlab("") + 
   scale_x_continuous(minor_breaks = NULL, breaks = b$x, labels = b$month_nam) + 
   theme(text = element_text(size = 6),  
         legend.key.height = unit(0.3, 'cm'),
@@ -219,7 +220,7 @@ d_week$province$sex$F %>% filter(ID_space %in% prov) %>%
   geom_point(aes(x = x, y = median.REM), size = 0.8) + 
   geom_ribbon(aes(x = x, ymin = LL.REM, ymax = UL.REM), alpha = 0.3, fill = viridis(15)[6]) +
   geom_hline(yintercept = 0, col = "red", linetype = 2) + 
-  theme_light() + ylim(c(-50, 180)) + ggtitle("3C. Females") + ylab("") + xlab("") + 
+  theme_light() + ylim(c(-50, 200)) + ggtitle("3C. Females") + ylab("") + xlab("") + 
   scale_x_continuous(minor_breaks = NULL, breaks = b$x, labels = b$month_nam) + 
   theme(text = element_text(size = 6),  
         legend.key.height = unit(0.3, 'cm'),

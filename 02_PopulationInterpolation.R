@@ -39,38 +39,40 @@ EUROSTAT_ISO <- readRDS("Output/EUROSTAT_ISO")
 head(pop)
 
 
-
+# retrieve all possible combinations of age groups, sex, region and EURO_LABEL weeks
 expand.grid(age = c("less40", "40-59", "60-69", "70-79", "80plus"), 
             sex = c("male", "female"), 
             region = unique(pop$NUTS318CD), 
             EURO_LABEL = unique(EUROSTAT_ISO$EURO_LABEL)) -> pop_weekly
 
+# As the population is only available for the 1st of January of every year, we need to create a weekly version
+# to feed in the model. The above gives as all the possible combinations required for the linear interpolation.
 
 
 pop_weekly$EURO_LABEL <- as.character(pop_weekly$EURO_LABEL)
+EUROSTAT_ISO$EURO_TIME <- as.Date(EUROSTAT_ISO$EURO_TIME) # make data format
 
-
-EUROSTAT_ISO$EURO_TIME <- as.Date(EUROSTAT_ISO$EURO_TIME)
-
+# here we select row_number()==4 to represent the day that is in the middle of the week
 EUROSTAT_ISO %>% filter(YEAR <= 2020) %>% group_by(EURO_LABEL) %>% filter(row_number()==4) -> EUROSTAT_ISO
+# the reference date refers to the population availability of the first of each year
 EUROSTAT_ISO %>% group_by(YEAR) %>% mutate(refdate = as.Date(paste0(YEAR, "-01-01"))) -> EUROSTAT_ISO
+# the day2pred is needed for the linear interpolation within the year
 EUROSTAT_ISO$day2pred <- as.numeric(EUROSTAT_ISO$EURO_TIME - as.Date("2015-01-01") + 1)
 
 
-
+# add the reference date and days two predict in the matrix for predictions, i.e. pop_weekly
 pop_weekly <- left_join(pop_weekly, EUROSTAT_ISO[,c("EURO_LABEL", "YEAR", "day2pred", "refdate")], 
                         by = c("EURO_LABEL" = "EURO_LABEL"))
 
 
 pop_weekly %>% as_tibble() %>%  rename(year = YEAR) -> pop_weekly
 
-# and now merge with the population
-
+# and now merge with the population to get the values for the 1st of each year
 pop_weekly <- left_join(pop_weekly, pop, by = c("year" = "year", "age" = "ageg", "sex" = "sex", "region" = "NUTS318CD"))
 
 
 
-## First two panels of the plot
+##--## First two panels of the plot
 pop %>% group_by(NUTS318CD, sex, ageg) %>% 
   summarise(coef = as.vector(coef(lm(population ~ year)))) %>% 
   filter(NUTS318CD %in% "VE", sex %in% "female", ageg %in% "40-59") -> coef.VE
@@ -123,18 +125,20 @@ pop_weekly <- left_join(pop_weekly, pop, by = c("year" = "year", "age" = "ageg",
 pop_weekly$refdate2 <- as.Date(paste0(pop_weekly$year + 1, "-01-01"))
 pop_weekly$X <- NULL
 
+# and here we compute the slope, intercept for the within year interpolation and use them to predict on day2pred
 pop_weekly %>% mutate(lambda = (pop.next.year - population)/as.numeric((refdate2 - refdate))) %>% 
   mutate(beta0 = population - lambda*as.numeric(refdate - as.Date("2015-01-01") + 1)) %>% 
   mutate(popfin = beta0 + lambda*day2pred) -> pop_weekly
 
 
-
+# remove what is not needed any longer
 pop_weekly$day2pred <- pop_weekly$refdate <- pop_weekly$population <- pop_weekly$pop.next.year <- pop_weekly$refdate2 <-
   pop_weekly$lambda <- pop_weekly$beta0 <-  pop_weekly$days2plot <- NULL
 
 colnames(pop_weekly)[3] <- "NUTS318CD"
 colnames(pop_weekly)[6] <- "population"
 
+# store
 saveRDS(pop_weekly, file = "Output/pop_weekly")
 
 
