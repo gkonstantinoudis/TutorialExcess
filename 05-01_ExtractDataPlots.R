@@ -91,6 +91,9 @@ rescale_REM <- function(obj) {
 }
 
 
+# Extract the data for all age*sex strata and spatial resolution as defined above, i.e.
+# strata <-  c("none","age","sex","agesex")  and geo.res = c("province", "region", "country")
+# when the temporal aggregation is the 2020 (yearly total).
 
 d <- lapply(geo.res, function(GEO) {
   res <- lapply(strata, function(STRATA) {
@@ -148,6 +151,9 @@ names(d) <- geo.res
 
 
 
+# Extract the data for all age*sex strata and spatial resolution as defined above, i.e.
+# strata <-  c("none","age","sex","agesex")  and geo.res = c("province", "region", "country")
+# when the temporal aggregation is weeks.
 
 d_week <- lapply(geo.res, function(GEO) {
   res <- lapply(strata, function(STRATA) {

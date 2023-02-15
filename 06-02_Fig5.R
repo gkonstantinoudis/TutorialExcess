@@ -32,7 +32,7 @@ shp %>% left_join(., link_table, by = c("SIGLA" = "SIGLA")) %>%
   summarise() -> shp_NUTS2
   
 
-# get the iso correspondance between months for the xaxis
+# get the iso correspondence between months for the xaxis
 
 date.iso <- data.frame(
   iso = rep(d_week$country$sex$F$EURO_LABEL, each = 7),

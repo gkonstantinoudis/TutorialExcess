@@ -38,8 +38,8 @@ nb2INLA("W.adj", W.nb)
 # Select data for the period 2015-2020
 data = finaldb 
 
-# Create indexes
-data$id.space <- as.numeric(as.factor(data$PROV))
+# Create indices
+data$id.space <- as.numeric(as.factor(data$PROV)) 
 data$id.time <- as.numeric(substr(data$EURO_LABEL, start = 7, stop = 8))
 data$id.tmp <- inla.group(data$mean.temp, n = 100, method = "cut", idx.only = TRUE)
 data$id.year <- data$year - 2014
@@ -54,7 +54,7 @@ formula =
   f(id.time, model='rw1', hyper=hyper.iid, constr = TRUE, scale.model = TRUE, cyclic = TRUE) +
   f(id.space, model='bym2', graph="W.adj", scale.model = TRUE, constr = TRUE, hyper = hyper.bym)
 
-# Define the penalized complexity prior a c(1, 0.01) defines Pr(sigma<=1)=0.01, whereas for phi: Pr(\phi<=0.5) = 0.5
+# PC priors
 hyper.bym <- list(theta1 = list('PCprior', c(1, 0.01)), theta2 = list('PCprior', c(0.5, 0.5)))
 hyper.iid <- list(theta = list(prior="pc.prec", param=c(1, 0.01)))
 
@@ -97,14 +97,12 @@ print(t_1 - t_0) # ~30mins
 
 
 # Retrieve Poisson samples from the models
-
 res.list <- apply(groups, 1,
                   function(X) readRDS(paste0(path2save,
                                              paste0("res_", X[1], "_", X[2]))))
 
 # with the loop bellow, we need to retrieve the linear predictor and sample from the posterior predictive, 
 # which is the Poisson distribution. 
-
 pois.samples.list <- list()
 t_0 <- Sys.time()
 

@@ -19,7 +19,7 @@ library(spdep)
 # Cross validation functions
 ################################################################################
 
-# function to fit INLA and store the cv
+# function to fit INLA and store the truth and the linear predictor
 inla.cv <- function(Y){
   
   in.mod <- 
@@ -78,7 +78,6 @@ postpredchecks <- function(Y){
 
 
 # Credible Interval function
-
 CrI <- function(X) paste0(X[1], " ", "(", X[2], ", ", X[3], ")")
 
 
@@ -92,7 +91,7 @@ CrI <- function(X) paste0(X[1], " ", "(", X[2], ", ", X[3], ")")
 groups4cv = as.data.frame(expand.grid(age.group = c("less40", "40-59", "60-69", "70-79", "80plus"),
                                       sex = c("F", "M")))
 
-
+# load data
 finaldb = readRDS("Output/findata")
 
 shp = read_sf("data/ProvCM01012020_g_WGS84.shp")
@@ -107,12 +106,12 @@ nb2INLA("W.adj", W.nb)
 # set up formula and priors
 formula = 
   deaths ~ 1 + offset(log(population)) + hol + id.year + 
-  f(id.tmp, model='rw2', hyper=hyper.iid, constr = TRUE, scale.model = TRUE) +
-  f(id.wkes, model='iid', hyper=hyper.iid, constr = TRUE) + 
-  f(id.time, model='rw1', hyper=hyper.iid, constr = TRUE, scale.model = TRUE, cyclic = TRUE) +
-  f(id.space, model='bym2', graph="W.adj", scale.model = TRUE, constr = TRUE, hyper = hyper.bym)
+  f(id.tmp, model='rw2', hyper=hyper.iid, constr = TRUE, scale.model = TRUE) + # flexible function for temperature
+  f(id.wkes, model='iid', hyper=hyper.iid, constr = TRUE) + # variance per week
+  f(id.time, model='rw1', hyper=hyper.iid, constr = TRUE, scale.model = TRUE, cyclic = TRUE) + # seasonal effect
+  f(id.space, model='bym2', graph="W.adj", scale.model = TRUE, constr = TRUE, hyper = hyper.bym) # spatial effect
 
-# priors
+# Define the penalized complexity prior a c(1, 0.01) defines Pr(sigma<=1)=0.01, whereas for phi: Pr(\phi<=0.5) = 0.5
 hyper.bym <- list(theta1 = list('PCprior', c(1, 0.01)), theta2 = list('PCprior', c(0.5, 0.5)))
 hyper.iid <- list(theta = list(prior="pc.prec", param=c(1, 0.01)))
 
@@ -135,7 +134,7 @@ for(j in 1:nrow(groups4cv)){
   agegroup <- as.character(groups4cv$age.group[j])
   sexg <- as.character(groups4cv$sex[j])
   
-  # recreate indexes
+  # recreate indices
   data$id.space <- as.numeric(as.factor(data$PROV))
   data$id.time <- as.numeric(substr(data$EURO_LABEL, start = 7, stop = 8))
   data$id.tmp <- inla.group(data$mean.temp, n = 100, method = "cut", idx.only = TRUE)
@@ -143,10 +142,12 @@ for(j in 1:nrow(groups4cv)){
   data$id.wkes <- as.numeric(factor(data$EURO_LABEL))
   data <- data[order(data$id.space),]
   
+  # select age*sex group
   data %>% filter((ageg %in% agegroup) & (sex %in% sexg)) -> datCV_firslop
   
   list.CV.results.spacetime <- list()
 
+  # run leave-out-one-year cross validation
   for(i in 1:5){
     datCV <- datCV_firslop
     testIndexes <- which(datCV$year %in% years[i], arr.ind=TRUE)
@@ -182,7 +183,6 @@ t_1 <- Sys.time()
 t_1 - t_0 # 1.67 min
 
 # tables of cross validation
-
 # Correlation table
 round(
   do.call(rbind, 
