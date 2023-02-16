@@ -40,6 +40,10 @@ holiday_df$Year[which(holiday_df$Data == "2021-01-01")] = 2020
 holiday_df = holiday_df %>% 
   mutate(EURO_LABEL = paste0(Year, "-W", sprintf("%02d", Week)))
 
+# Create 'Output' dir
+if(!dir.exists("Output"))
+  dir.create("Output")
+
 # store output
 saveRDS(holiday_df, file="Output/holiday_df")
 
