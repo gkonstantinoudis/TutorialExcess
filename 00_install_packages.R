@@ -1,8 +1,8 @@
 # This script contains information about the packages used for the analysis. 
 # Run this script first in order to install all the required packages.
 
-pkgs <- c("dplyr", "ecmwfr", "FNN", "ggplot2", "grid", "lctools", "lubridate", 
-  "maptools", "ncdf4", "patchwork", "pbapply", "plotly", "plyr", 
+pkgs <- c("dplyr", "ecmwfr", "ISOweek", "FNN", "ggplot2", "grid", "lctools",
+  "lubridate", "maptools", "ncdf4", "patchwork", "pbapply", "plotly", "plyr", 
   "raster", "RColorBrewer", "readr", "reshape2", "rgdal", "sf", "sn", 
   "sp", "spacetime", "spdep", "stringr", "tidyr", "tidyverse", 
   "timeDate", "viridis", "xtable", "xts", "data.table", "tibble")
