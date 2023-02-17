@@ -166,7 +166,7 @@ GetTemperature <- do.call(rbind, GetTemperature)
 
 # create and id by latitude and longitude
 GetTemperature %>% 
-  group_by(lon, lat) %>% 
+  dplyr::group_by(lon, lat) %>% 
   mutate(ID = cur_group_id()) -> GetTemperature
 
 
