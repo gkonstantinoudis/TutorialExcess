@@ -1,5 +1,3 @@
-
-
 # Created 08.10.2021
 
 # Clean and download national holidays
