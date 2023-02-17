@@ -1,6 +1,6 @@
-Some data files are too large as to be stored in GitHub. All data files can be dowloaded from the following link:
+Some data files (in the 'data' folder) are too large as to be stored in GitHub. All data files can be dowloaded from the following link:
 
-https://imperialcollegelondon.app.box.com/s/5di16s2ybnpfcltnfcl5en2rom5fj5vd/folder/152284992120
+https://imperialcollegelondon.app.box.com/s/5di16s2ybnpfcltnfcl5en2rom5fj5vd
 
 
 To be able to run the 01_RetrieveTemperature.R file:
@@ -10,3 +10,10 @@ To be able to run the 01_RetrieveTemperature.R file:
 3. Log in and once you are ok and logged in, click on your name on the top right next to logout and retrieve the information 
 about the API key and UID number. These will be used to download the data through R
 
+
+Alternatively, the required temperature (and other) files are also available in
+folder 'Output' in
+
+https://imperialcollegelondon.app.box.com/s/5di16s2ybnpfcltnfcl5en2rom5fj5vd
+
+and could be copied locally in the 'Output' folder.
