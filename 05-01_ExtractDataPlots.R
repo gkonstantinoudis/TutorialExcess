@@ -50,7 +50,7 @@ link_table = readRDS("data/link_table")
 
 
 # Load functions 
-source("05-02_functions.R")
+source("functions.R")
 
 
 # Merge map and link table
