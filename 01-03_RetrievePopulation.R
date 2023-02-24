@@ -53,25 +53,32 @@ pop20 %>% filter(!Age %in% "Totale") -> pop20
 # Select the second Province link as you read the page from the top and name it POP2002_2019. Store it on the data
 # folder. # (POP2002_2019 is already provided on the data folder).
 
-pop15_19 <- read_delim("data/POP2002_2019.csv", 
-                             ";", escape_double = FALSE, trim_ws = TRUE, 
-                              skip = 4)
+# pop15_19 <- read_delim("data/POP2002_2019.csv", 
+#                        ";", escape_double = FALSE, trim_ws = TRUE, 
+#                        skip = 4)
+
+
+pop15_19 <- read.csv("data/POP2002_2019.csv", 
+                       sep = ";", header = TRUE, 
+                       skip = 4)
 
 colnames(pop15_19)[1] <- "Territorio/Eta"
+# rename the columns:
+colnames(pop15_19)[colnames(pop15_19) %in% paste0("X", 0:100)] <- 0:100
 
 # We are interested in all nationalities and the years 2015:2019
 pop15_19 <- pop15_19[(which(pop15_19$`Territorio/Eta` == "Tutte le cittadinanze - Anno: 2015")):
                        (which(pop15_19$`Territorio/Eta` == "Cittadinanza italiana - Anno: 2002")), ]
 
 
-n.dat <- length(unique(as.numeric(pop15_19$`Territorio/Eta`)))
-
+which.keep <- substr(pop15_19$`Territorio/Eta`, 1, stop = 1) == '0' | substr(pop15_19$`Territorio/Eta`, 1, stop = 1) == '1'
+pop15_19$`Territorio/Eta`[which.keep] %>% as.numeric() %>% unique() %>% length() -> n.dat
 
 
 # Seperate by sex and bring together
 lapply(c("Maschi", "Femmine"), function(Y){
   
-  lapply(which(pop15_19$`0` %in% Y), function(X) seq(from = X+1, to  = X + n.dat-1, by = 1)) -> list.sex
+  lapply(which(pop15_19$`0` %in% Y), function(X) seq(from = X+1, to  = X + n.dat, by = 1)) -> list.sex
   
   pop15_19_sex <- NULL
   
@@ -123,14 +130,14 @@ pop15_20$Province[pop15_20$Province=="Massa-Carrara"] = "Massa Carrara"
 
 
 
-# GeograpProvincermation from the shapefile
-prov.shp = readOGR("data/ProvCM01012020_g_WGS84.shp")
-geodata = prov.shp@data %>% dplyr::select(COD_RIP,COD_REG,COD_PROV,DEN_UTS,SIGLA)
+# Province information from the shapefile
+prov.shp = read_sf("data/ProvCM01012020_g_WGS84.shp")
+geodata = prov.shp %>% dplyr::select(COD_RIP,COD_REG,COD_PROV,DEN_UTS,SIGLA)
 
 
 # Merge pop and geodata to have it in compatible format
 pop15_20 = left_join(pop15_20, geodata, by=c("Province"="DEN_UTS"))
-
+pop15_20 <- pop15_20 %>% ungroup() %>% select(SIGLA, Age, sex, year, pop)
 
 
 # the population file should have the following format, so the population interpolation file
@@ -156,9 +163,6 @@ pop15_20$sex[pop15_20$sex %in% "F"] <- "female"
 
 # Save data
 save(pop15_20, file="Output/pop15_20_final.RData")
-
-
-
 
 ##################################################################################
 ##################################################################################

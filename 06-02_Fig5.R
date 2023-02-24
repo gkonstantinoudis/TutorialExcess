@@ -43,7 +43,7 @@ date.iso$month <- month(date.iso$date)
 date.iso$month_nam <- month.abb[date.iso$month]
 
 d_week$country$sex$M %>% 
-  left_join(., date.iso, by = c("EURO_LABEL" = "iso")) %>% 
+  left_join(., date.iso, by = c("EURO_LABEL" = "iso"), multiple = "all") %>% 
   mutate(x = as.numeric(as.factor(EURO_LABEL))) -> b
 
 b <-  b[, c("month_nam","x")]

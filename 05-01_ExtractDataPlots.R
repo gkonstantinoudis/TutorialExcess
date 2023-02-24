@@ -74,7 +74,7 @@ MAPS$IT$province <- st_transform(MAPS$IT$province, '+proj=longlat +datum=WGS84')
 MAPS$IT$country$NAME <- "Italy"
 
 # Define strata for aggregation (argument 'stratify.by')
-strata <-  c("none","age","sex","agesex")  
+strata <-  c("none","age","sex", "agesex")  
 geo.res = c("province", "region", "country")
 
 

@@ -74,15 +74,15 @@ pop_weekly <- left_join(pop_weekly, pop, by = c("year" = "year", "age" = "ageg",
 
 ##--## First two panels of the plot
 pop %>% group_by(NUTS318CD, sex, ageg) %>% 
-  summarise(coef = as.vector(coef(lm(population ~ year)))) %>% 
+  reframe(coef = as.vector(coef(lm(population ~ year)))) %>% 
   filter(NUTS318CD %in% "VE", sex %in% "female", ageg %in% "40-59") -> coef.VE
 
 pop %>% filter(NUTS318CD %in% "VE", sex %in% "female", ageg %in% "40-59") -> pop.VE
 
-ggplot() + geom_point(data = pop.VE, aes(x=year, y=population), cex = 1) + 
-  geom_point(aes(x=2021, y = coef.VE$coef %*% c(1, 2021)), col = "red", pch = 17, cex = 1) + 
+ggplot() + geom_point(data = pop.VE, aes(x=year, y=population), size = 1) + 
+  geom_point(aes(x=2021, y = coef.VE$coef %*% c(1, 2021)), col = "red", pch = 17, size = 1) + 
   geom_line(aes(x=2015:2021, y = c(coef.VE$coef[1] + coef.VE$coef[2]*2015:2021)), 
-            linetype = 2, col = "red", size = 0.3) + 
+            linetype = 2, col = "red", linewidth = 0.3) + 
   scale_x_continuous(breaks = 2015:2021) + ylim(c(136400, 139200)) +
   theme_light() +
   ggtitle("A.") + 
@@ -90,9 +90,9 @@ ggplot() + geom_point(data = pop.VE, aes(x=year, y=population), cex = 1) +
         plot.margin=unit(c(0,0,0,0), "cm")) -> p1
 
 
-ggplot() + geom_point(data = pop.VE, aes(x=year, y=population), cex = 1) + 
-  geom_point(aes(x=2021, y = coef.VE$coef %*% c(1, 2021)), col = "red", pch = 17, cex = 1) + 
-  geom_line(aes(x=2015:2021, y = c(pop.VE$population, coef.VE$coef %*% c(1, 2021))), linetype = 2, col = "black", size = 0.3) + 
+ggplot() + geom_point(data = pop.VE, aes(x=year, y=population), size = 1) + 
+  geom_point(aes(x=2021, y = coef.VE$coef %*% c(1, 2021)), col = "red", pch = 17, size = 1) + 
+  geom_line(aes(x=2015:2021, y = c(pop.VE$population, coef.VE$coef %*% c(1, 2021))), linetype = 2, col = "black", linewidth = 0.3) + 
   scale_x_continuous(breaks = 2015:2021) + ylim(c(136400, 139200)) + 
   theme_light() + 
   # geom_rect(aes(xmin = 2014.9, xmax = 2016.1, ymin = 138300, ymax = 139000),
