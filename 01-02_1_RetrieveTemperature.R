@@ -22,8 +22,8 @@ library(ecmwfr)
 # log in and once you are ok and logged in, click on your name on the top right next to logout
 # and retrieve the information about the API key.
 
-cds.user <- "your_CDS_key" # Insert your CDS user here
-cds.key <- "your_CDS_API_KEY_here" #"Insert_your_CDS_API_KEY_here"
+cds.user <- "" # Insert your CDS user here
+cds.key <- "" #"Insert_your_CDS_API_KEY_here"
 
 # Set up the API and UID
 wf_set_key(user = cds.user, key = cds.key, service = "cds")
@@ -44,10 +44,10 @@ request <- list(
            "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"),
   # area is specified as N, W, S, E
   area = c(48, 6, 34, 20),
-  target = "temperature2015_2020_Italy.nc"
+  target = "temperature2015_2020_Italy_chk.nc"
 )
 
-if(!file.exists("Output/temperature2015_2020_Italy.nc")) {
+if(!file.exists("Output/temperature2015_2020_Italy_chk.nc")) {
   file <- wf_request(user = cds.user,
                    request = request,
                    transfer = TRUE,
