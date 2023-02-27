@@ -16,9 +16,10 @@ The data folder [here](https://imperialcollegelondon.box.com/s/5di16s2ybnpfcltnf
 * POP2002_2019.csv: a file containing population counts during 2002-2019
 * POP2002_2019.csv: a file containing population counts in 2020
 * link_table: an .rds file containing the links between NUTS2 and NUTS3 (province) regions in italy. 
-* 
+
 The output folder [here](https://imperialcollegelondon.box.com/s/5di16s2ybnpfcltnfcl5en2rom5fj5vd) includes:
 * temperature2015_2020.nc: the raw temperature file downloaded from ERA5
+* temperature20*.nc: the raw temperature files downloaded from ERA5 (based on the size restrictions)
 * yearCV_* : the cross validation results
 * res_* : the model based results 
 * TemperatureWeekleItaly: the clean temperature file
