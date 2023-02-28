@@ -17,3 +17,5 @@ folder 'Output' in
 https://imperialcollegelondon.app.box.com/s/5di16s2ybnpfcltnfcl5en2rom5fj5vd
 
 and could be copied locally in the 'Output' folder.
+
+Users running the code from scratch after 28.02.2023 are suggested NOT TO RUN the 01-02_1_RetrieveTemperature.R file.
