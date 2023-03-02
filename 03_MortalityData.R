@@ -22,6 +22,8 @@ library(sf)
 library(stringr)
 library(lubridate)
 
+# Unzip data
+unzip("data/comuni_giornaliero_31gennaio21.zip")
 
 deaths <- read_csv("data/comuni_giornaliero_31gennaio21.csv")
 
