@@ -80,7 +80,8 @@ funpar <- function(k) DonwloadTemperature(X = toloop[k])
 t_0 <- Sys.time()
 
 # Set up parallel environment
-ncores <- 20
+#ncores <- 20
+ncores <- detectCores() - 1
 k <- 1:length(toloop)
 cl_inla <- makeCluster(ncores, methods=FALSE)
 
