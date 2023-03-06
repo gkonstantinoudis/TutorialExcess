@@ -18,7 +18,6 @@ The data folder [here](https://imperialcollegelondon.box.com/s/5di16s2ybnpfcltnf
 * link_table: an .rds file containing the links between NUTS2 and NUTS3 (province) regions in italy. 
 
 The output folder [here](https://imperialcollegelondon.box.com/s/5di16s2ybnpfcltnfcl5en2rom5fj5vd) includes:
-* temperature2015_2020.nc: the raw temperature file downloaded from ERA5
 * temperature20*.nc: the raw temperature files downloaded from ERA5 (based on the size restrictions)
 * yearCV_* : the cross validation results
 * res_* : the model based results 
@@ -34,5 +33,3 @@ The output folder [here](https://imperialcollegelondon.box.com/s/5di16s2ybnpfclt
 * The folder archive contains the older temperature version
 
 If you select not to follow the steps in the R-files to download the data, download the folders from [here](https://imperialcollegelondon.box.com/s/5di16s2ybnpfcltnfcl5en2rom5fj5vd), unzip and put them in your working directory. 
-
-Note: The 2 temperature files differ based on the updated regulations of ERA-5 with respect to size of files to be downloaded. The 01-02_1_RetrieveTemperature.R file is with the older regulations, thus people were allowed to download a file ~8Gb. The 01-02_2_RetrieveTemperature.R corresponds to the regulation as of 28.02.2023, thus one needs to download multiple files and bring them together. Users running the code from scratch after 28.02.2023 are suggested NOT TO RUN the 01-02_1_RetrieveTemperature.R file. 
