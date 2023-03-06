@@ -1,7 +1,8 @@
 
 
 
-# Created 07.10.2021
+
+# Created 27.02.2023
 
 # Clean and download temperature
 
@@ -33,50 +34,79 @@ if(is.null(cds.user) | is.null(cds.key)) {
 }
 
 
-request <- list(
-  dataset_short_name = "reanalysis-era5-land",
-  product_type   = "reanalysis",
-  format = "netcdf",
-  variable = "2m_temperature",
-  date = "2014-12-28/2021-01-03", # this is to match the ISO weeks
-  time = c("00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", 
-           "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", 
-           "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"),
-  # area is specified as N, W, S, E
-  area = c(48, 6, 34, 20),
-  target = "temperature2015_2020_Italy_chk.nc"
-)
 
-if(!file.exists("Output/temperature2015_2020_Italy_chk.nc")) {
-  file <- wf_request(user = cds.user,
-                   request = request,
-                   transfer = TRUE,
-                   path = "Output/",
-                   time_out = 3600*24,
-                   verbose = TRUE)
+# function to download the temperature
+
+DonwloadTemperature <- function(X){
+  
+  request <- list(
+    dataset_short_name = "reanalysis-era5-land",
+    product_type   = "reanalysis",
+    format = "netcdf",
+    variable = "2m_temperature",
+    date = X, # this is to match the ISO weeks
+    time = c("00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", 
+             "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", 
+             "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"),
+    # area is specified as N, W, S, E
+    area = c(48, 6, 34, 20),
+    target = paste0("temperature", sub(pattern = "/", replacement = "_", x=X), ".nc")
+  )
+  
+  if(!file.exists(paste0("Output/temperature", sub(pattern = "/", replacement = "_", x=X), ".nc"))) {
+    file <- wf_request(user = cds.user,
+                       request = request,
+                       transfer = TRUE,
+                       path = "Output",
+                       time_out = 3600*24,
+                       verbose = TRUE)
+  }
+  
 }
 
-# and you will get a temperature_Italy.nc file on your working directory. 
+# 2014-12-28/2021-01-03
+
+start_date <- as.Date("2014-12-28")
+end_date <- as.Date("2021-01-03")
+define_dates <- seq(from = start_date, to = end_date, length.out = 60)
+
+toloop <- paste(define_dates[-length(define_dates)], define_dates[-1], sep = "/")
+
+
+# run on parallel
+library(doParallel)
+funpar <- function(k) DonwloadTemperature(X = toloop[k])
+  
+t_0 <- Sys.time()
+
+# Set up parallel environment
+#ncores <- 20
+ncores <- detectCores() - 1
+k <- 1:length(toloop)
+cl_inla <- makeCluster(ncores, methods=FALSE)
+
+# extract packages on parallel environment 
+clusterEvalQ(cl_inla, {
+  library(ecmwfr)
+})
+
+# extract R objects on parallel environment
+clusterExport(cl_inla, c("toloop", "DonwloadTemperature", "cds.user", "cds.key"))
+
+# run the the function in parallel
+outpar <- parLapply(cl = cl_inla, k, funpar)
+
+# close parallel environment
+stopCluster(cl_inla)
+t_1 <- Sys.time()
+t_1 - t_0 
 
 
 
-# Alternatively one can use this link https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-land?tab=overview
-# select download data, and make the following selection: Temperature: 2m temperature, Years: 2015-2020, Months: Select all, Days: All, Time: Select all, 
-# and for the geographical area, select sub-region extraction and use 48, 6, 34, 20 specified as N, W, S, E. Store this file on
-# a new folder called "Output" in your working directory as temperature_Italy.nc.
 
 
 
-# The temperature_Italy.nc file is also provided for download here: 
-# https://drive.google.com/drive/folders/1H7F4PuiLlcRwWtbmsJAGPEWJtLu30BN6?usp=sharing
-
-
-
-
-
-
-
-# Step 2. Clean the temperature file
+# Step 2. Clean the temperature files
 
 # load packages
 library(ncdf4)
@@ -96,16 +126,21 @@ library(dplyr)
 library(stringr)
 library(data.table)
 library(tibble)
+library(abind)
 
 # read the files
-temperature <- nc_open("Output/temperature2015_2020_Italy.nc")
-extr.tmp <- ncvar_get(temperature, varid="t2m")
+files2read <- list.files("Output/")[list.files("Output/") %>% startsWith(.,"temperature")]
+temperature <- lapply(paste0("Output/", files2read), nc_open) 
+extr.tmp <- lapply(temperature, function(X) ncvar_get(X, varid="t2m"))
 
 # extract space 
-lon <- ncvar_get(temperature,"longitude")
-lat <- ncvar_get(temperature,"latitude")
+lon <- lapply(temperature, function(X) ncvar_get(X,"longitude")) 
+lon <- lon[[1]]
+lat <- lapply(temperature, function(X) ncvar_get(X,"latitude")) 
+lat <- lat[[1]]
 # and time
-hour <- ncvar_get(temperature,"time")
+hour <- lapply(temperature, function(X) ncvar_get(X,"time")) 
+hour <- do.call(c, hour)
 # the format is hours since 1900-01-01:
 hour_tr <- as.POSIXct(hour*3600, origin="1900-01-01 00:00")
 # Set time zone (UTC)
@@ -117,14 +152,30 @@ hour_tr <- format(hour_tr, format='%Y-%m-%d', tz = "Europe/Rome")
 
 # and from this string we need to remove the dates outside the 2015-2020 ISO weeks, ie everything before 2014-12-29 and
 # after 2021-01-03
-extr.tmp[,,hour_tr>="2014-12-29" & hour_tr<="2021-01-03"] -> tmp
-hour_tr[hour_tr>="2014-12-29" & hour_tr<="2021-01-03"] -> hour_tr
-dat <- data.frame(start = seq(from = 1, to = length(hour_tr), by = 24), 
-                  stop = seq(from = 24, to = length(hour_tr), by = 24))
+datestart <- "2014-12-29"
+dateend <- "2021-01-03"
 
-un.hour <- unique(hour_tr)
-un.hour <- un.hour[order(un.hour)]
-dat$date <- un.hour
+extr.tmp <- abind(extr.tmp, along = 3)
+extr.tmp[,,(hour_tr>=datestart) & (hour_tr<=dateend)] -> extr.tmp
+hour_tr[(hour_tr>=datestart) & (hour_tr<=dateend)] -> hour_tr
+
+# define the start/end points of each date
+dat <- as.data.frame(table(hour_tr))
+
+start <- numeric(nrow(dat))
+stop <- numeric(nrow(dat))
+
+start[1] <- 1
+stop[1] <- dat$Freq[1]
+
+for(i in 2:nrow(dat)){
+  start[i] <- stop[i-1] + 1
+  stop[i] <- start[i] + dat$Freq[i] - 1
+}
+
+dat$start <- start
+dat$stop <- stop
+
 
 
 # function to retrieve daily mean
@@ -151,14 +202,21 @@ DailyMean <- function(start, stop, date){
   return(mat2store)
 }
 
-# run the DailyMean funciton across the data
+# run the DailyMean function across the data
 GetTemperature <- 
   pbapply(dat, 1, function(X){
     
-    return(DailyMean(start = X[1], stop = X[2], date = X[3]))
+    return(DailyMean(start = X[3], stop = X[4], date = X[1]))
     
-} 
-) # approximately 1h
+  } 
+  ) # approximately 1h
+
+
+
+
+
+##
+## RUN FROM HERE TO CHECK IF FINE
 
 
 
@@ -242,7 +300,7 @@ pblapply(1:length(loopID), function(X){
   
   # the missings are basically the same week and year, so I will impute accordingly
   tmp_stjoin$EURO_LABEL[is.na(tmp_stjoin$EURO_LABEL)] <- tmp_stjoin$EURO_LABEL[!is.na(tmp_stjoin$EURO_LABEL)][1]
-
+  
   # and calculate mean temperature of points that fall in a particular municipality 
   tmp_stjoin %>% group_by(IDSpace) %>% 
     mutate(mean.temp = mean(weekly.mean, na.rm = TRUE)) %>% 
@@ -252,7 +310,7 @@ pblapply(1:length(loopID), function(X){
   tmp_stjoin$IDSpace <- as.character(tmp_stjoin$IDSpace)
   
   return(tmp_stjoin)
-  }
+}
 ) -> list.loop
 
 
@@ -270,14 +328,23 @@ saveRDS(loop.df, file = "Output/TemperatureWeeklyItaly")
 
 
 
-
-
-
 # Code for Figure 2
 
 GetTemperature[GetTemperature$date == "2015-01-01",] -> tmp_points
 
-tmp.rstr <- raster("Output/temperature2015_2020_Italy.nc")
+
+tmp.nc <- nc_open("Output/temperature2014-12-28_2015-02-03.nc") 
+hour2plot <- ncvar_get(tmp.nc,"time")
+# the format is hours since 1900-01-01:
+hour2plot <- as.POSIXct(hour2plot*3600, origin="1900-01-01 00:00")
+attr(hour2plot, "tzone") <- "UTC"
+hour2plot <- format(hour2plot, tz = "Europe/Rome")
+hour2plot <- which(hour2plot %in% "2015-01-01 00:00:00")
+tmp.rstr <- raster("Output/temperature2014-12-28_2015-02-03.nc", band = hour2plot)
+
+# set the correct timezone for Italy
+
+
 
 gplot_data <- function(x, maxpixels = 50000)  {
   x <- raster::sampleRegular(x, maxpixels, asRaster = TRUE)
@@ -295,7 +362,8 @@ gplot_data <- function(x, maxpixels = 50000)  {
   dat
 }
 
-gplot_r <- gplot_data(tmp.rstr[[1]])
+
+gplot_r <- gplot_data(tmp.rstr)
 gplot_r$value <- gplot_r$value -273.15 
 ggplot()  + theme_light() + 
   geom_tile(data = dplyr::filter(gplot_r, !is.na(value)), aes(x = x, y = y, fill = value)) + 
@@ -348,3 +416,6 @@ dev.off()
 ##################################################################################
 ##################################################################################
 ##################################################################################
+
+
+
