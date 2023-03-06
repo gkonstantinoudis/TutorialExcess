@@ -30,7 +30,7 @@ ui <- dashboardPage(title = "Excess Mortality App",
     skin = "red", 
   dbHeader,
   dashboardSidebar(
-    useShinyalert(),  # Set up shinyalert
+    #useShinyalert(),  # Set up shinyalert
     sidebarMenu(id = "tabs",
       menuItem("Introduction", tabName = "introduction", icon = icon("info")),
       menuItem("Spatial Analysis", tabName = "spatial", icon = icon("map"),
