@@ -328,9 +328,6 @@ saveRDS(loop.df, file = "Output/TemperatureWeeklyItaly")
 
 
 
-
-
-
 # Code for Figure 2
 
 GetTemperature[GetTemperature$date == "2015-01-01",] -> tmp_points
