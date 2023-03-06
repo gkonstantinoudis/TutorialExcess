@@ -19,9 +19,6 @@ library(mapproj)
 library(rgdal)
 library(plotly)
 
-# Última semana con datos
-ultima.semana <- 40
-
 source("utils.R")
 source("ui.R")
 source("server.R")
