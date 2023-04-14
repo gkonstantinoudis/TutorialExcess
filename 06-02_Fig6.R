@@ -12,7 +12,6 @@
 library(dplyr)
 library(ggplot2)
 library(sf)
-library(viridis)
 library(patchwork)
 library(RColorBrewer)
 

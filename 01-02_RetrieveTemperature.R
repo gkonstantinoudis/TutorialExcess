@@ -17,6 +17,7 @@ if(!dir.exists("Output"))
 
 # load packages
 library(ecmwfr)
+library(doParallel)
 
 # You need to create an account here https://cds.climate.copernicus.eu/cdsapp#!/home, 
 # agree with the terms here: https://cds.climate.copernicus.eu/cdsapp/#!/terms/licence-to-use-copernicus-products,
@@ -74,7 +75,6 @@ toloop <- paste(define_dates[-length(define_dates)], define_dates[-1], sep = "/"
 
 
 # run on parallel
-library(doParallel)
 funpar <- function(k) DonwloadTemperature(X = toloop[k])
   
 t_0 <- Sys.time()
@@ -111,22 +111,15 @@ t_1 - t_0
 # load packages
 library(ncdf4)
 library(plyr)
-library(tidyr)
-library(pbapply)
 library(sf)
-library(tidyverse)
-library(maptools)
-library(lctools)
 library(raster)
 library(lubridate)
-library(spdep)
-library(FNN)
 library(patchwork)
 library(dplyr)
 library(stringr)
 library(data.table)
-library(tibble)
 library(abind)
+library(ggplot2)
 
 # read the files
 files2read <- list.files("Output/")[list.files("Output/") %>% startsWith(.,"temperature")]
@@ -177,8 +170,8 @@ dat$start <- start
 dat$stop <- stop
 
 
-
 # function to retrieve daily mean
+
 DailyMean <- function(start, stop, date){
   
   tmp <- aaply(extr.tmp[,,start:stop], .margin = c(1,2), .fun = function(Y) mean(Y-273.15))
@@ -203,17 +196,16 @@ DailyMean <- function(start, stop, date){
 }
 
 # run the DailyMean function across the data
+t_0 <- Sys.time()
 GetTemperature <- 
-  pbapply(dat, 1, function(X){
+  apply(dat, 1, function(X){
     
     return(DailyMean(start = X[3], stop = X[4], date = X[1]))
     
   } 
   ) # approximately 1h
-
-
-
-
+t_1 <- Sys.time()
+t_1-t_0
 
 ##
 ## RUN FROM HERE TO CHECK IF FINE
@@ -222,10 +214,10 @@ GetTemperature <-
 
 GetTemperature <- do.call(rbind, GetTemperature)
 
-# create and id by latitude and longitude
+ # create and id by latitude and longitude
 GetTemperature %>% 
   dplyr::group_by(lon, lat) %>% 
-  mutate(ID = cur_group_id()) -> GetTemperature
+  dplyr::mutate(ID = dplyr::cur_group_id()) -> GetTemperature
 
 
 # Now we need the shp in Italy.
@@ -285,14 +277,14 @@ mun$IDSpace <- as.character(mun$IDSpace)
 # Work on data.table to speed up the filter() computation 
 GetTemperature_tmp <- as.data.table(GetTemperature_tmp)
 
-pblapply(1:length(loopID), function(X){
+
+lapply(1:length(loopID), function(X){
   
   i <- X
   tmp <- GetTemperature_tmp[EURO_LABEL == loopID[i]]
   tmp_sf <- st_as_sf(tmp, coords = c("X", "Y"), crs = st_crs(mun))
   tmp_sf$X <- tmp$X
   tmp_sf$Y <- tmp$Y
-  
   tmp_stjoin <- st_join(mun, tmp_sf)
   
   tmp_stjoin <- as.data.frame(tmp_stjoin)
@@ -302,9 +294,10 @@ pblapply(1:length(loopID), function(X){
   tmp_stjoin$EURO_LABEL[is.na(tmp_stjoin$EURO_LABEL)] <- tmp_stjoin$EURO_LABEL[!is.na(tmp_stjoin$EURO_LABEL)][1]
   
   # and calculate mean temperature of points that fall in a particular municipality 
-  tmp_stjoin %>% group_by(IDSpace) %>% 
-    mutate(mean.temp = mean(weekly.mean, na.rm = TRUE)) %>% 
-    filter(!duplicated(IDSpace)) -> tmp_stjoin
+  tmp_stjoin %>% 
+    dplyr::group_by(IDSpace) %>% 
+    dplyr::mutate(mean.temp = mean(weekly.mean, na.rm = TRUE)) %>% 
+    dplyr::filter(!duplicated(IDSpace)) -> tmp_stjoin
   
   tmp_stjoin <- tmp_stjoin[,c("IDSpace", "EURO_LABEL", "mean.temp")]
   tmp_stjoin$IDSpace <- as.character(tmp_stjoin$IDSpace)

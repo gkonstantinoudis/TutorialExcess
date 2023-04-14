@@ -10,18 +10,8 @@
 #---------------------------------------------------------------------------------
 
 # load packages
-library(sp)
 library(sf)
-library(xts)
-library(spacetime)
-library(RColorBrewer)
-library(plotly)
-library(grid)
 library(dplyr)
-library(pbapply)
-library(viridis)
-
-
 
 # Age-sex groups
 agesex_grps <- expand.grid(age = c("40<", "40-59", "60-69", "70-79", "80+"),
@@ -36,7 +26,7 @@ DB$IT <- readRDS("Output/poisson_samples_all")
 
 # Read maps
 MAPS <- list()
-mymap <- st_read("data/ProvCM01012020_g_WGS84.shp") 
+mymap <- read_sf("data/ProvCM01012020_g_WGS84.shp") 
 MAPS$IT <- mymap 
 
 # Number of weeks
@@ -203,7 +193,7 @@ d_week <- lapply(geo.res, function(GEO) {
   
   return(res)
 })
-# Add geo names
+ # Add geo names
 names(d_week) <- geo.res
 
 

@@ -8,13 +8,11 @@
 
 #---------------------------------------------------------------------------------
 
-library(tidyverse)
-library(reshape2)
-library(lubridate)
-library(rgdal)
-library(spdep)
-library(readr)
+library(dplyr)
 library(tidyr)
+library(lubridate)
+library(readr)
+library(sf)
 
 options(encoding = "ISO-8859-1")
 

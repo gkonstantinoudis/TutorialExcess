@@ -35,7 +35,7 @@ get2020data = function(post.samples = pois.samples.list, geo.res, link_table=NUL
   
   # For each i in 1:10 extract only the necessary data (1000 simulations + observed data)
   if(geo.res == "province"){
-    pblapply(post.samples, function(X){
+    lapply(post.samples, function(X){
       
       X <- select(X, starts_with("V"), "ID_space") %>%
         group_by(ID_space) %>%
@@ -43,7 +43,7 @@ get2020data = function(post.samples = pois.samples.list, geo.res, link_table=NUL
       return(X)
     }) -> list.sum.deaths
     
-    pblapply(post.samples, function(X){
+    lapply(post.samples, function(X){
       X <- data.frame(ID_space = X$ID_space, observed = X$deaths)
       Y <- X %>% 
         group_by(ID_space) %>% 
@@ -51,7 +51,7 @@ get2020data = function(post.samples = pois.samples.list, geo.res, link_table=NUL
       return(Y)
     }) -> list.observed
     
-    pblapply(post.samples, function(X){
+    lapply(post.samples, function(X){
       X <- data.frame(ID_space = X$ID_space, population = X$population, year = X$year)
       Y <- X %>% 
         group_by(ID_space) %>% 
@@ -62,7 +62,7 @@ get2020data = function(post.samples = pois.samples.list, geo.res, link_table=NUL
   
   # For each i in 1:10 aggregate predicted/observed values by region 
   if(geo.res == "region"){
-    pblapply(post.samples, function(X){
+    lapply(post.samples, function(X){
       
       X <- select(X, starts_with("V"), "ID_space")
       X <- left_join(X, link_table, by = c("ID_space"))
@@ -80,7 +80,7 @@ get2020data = function(post.samples = pois.samples.list, geo.res, link_table=NUL
     }) -> list.sum.deaths
     
     
-    pblapply(post.samples, function(X){
+    lapply(post.samples, function(X){
       X <- data.frame(ID_space = X$ID_space, observed = X$deaths)
       X <- left_join(X, link_table, by = c("ID_space"))
       
@@ -89,7 +89,7 @@ get2020data = function(post.samples = pois.samples.list, geo.res, link_table=NUL
       return(Y)
     }) -> list.observed
     
-    pblapply(post.samples, function(X){
+    lapply(post.samples, function(X){
       X <- data.frame(ID_space = X$ID_space, population = X$population)
       X <- left_join(X, link_table, by = c("ID_space"))
       Y <- X %>% 
@@ -102,7 +102,7 @@ get2020data = function(post.samples = pois.samples.list, geo.res, link_table=NUL
   
   # For each i in 1:10 aggregate predicted/observed values to get the total for the country
   if(geo.res == "country"){
-    pblapply(post.samples, function(X){
+    lapply(post.samples, function(X){
       X %>% 
         dplyr::select(starts_with("V")) %>% 
         summarise_all(sum) -> X
@@ -111,13 +111,13 @@ get2020data = function(post.samples = pois.samples.list, geo.res, link_table=NUL
       return(X)
     }) -> list.sum.deaths
     
-    pblapply(post.samples, function(X){
+    lapply(post.samples, function(X){
       X %>% summarise(observed = sum(deaths)) -> Y
       Y$COUNTRY = "Italy"
       return(Y)
     }) -> list.observed
     
-    pblapply(post.samples, function(X){
+    lapply(post.samples, function(X){
       X %>% group_by(ID_space) %>% summarise(population = mean(population)) -> Y
       Y %>% summarise(population = sum(population)) -> Y
       Y$COUNTRY = "Italy"
@@ -287,17 +287,17 @@ get2020weeklydata = function(post.samples = pois.samples.list, geo.res, link_tab
   
   # For each i in 1:10 extract only the necessary data (1000 simulations + observed data)
   if(geo.res == "province"){
-    pblapply(post.samples, function(X){
+    lapply(post.samples, function(X){
       X <- select(X, starts_with("V"), "ID_space", "EURO_LABEL")
       return(X)
     }) -> list.sum.deaths
     
-    pblapply(post.samples, function(X){
+    lapply(post.samples, function(X){
       X <- data.frame(ID_space = X$ID_space, observed = X$deaths, EURO_LABEL=X$EURO_LABEL)
       return(X)
     }) -> list.observed
   
-    pblapply(post.samples, function(X){
+    lapply(post.samples, function(X){
       X <- data.frame(ID_space = X$ID_space, population = X$population, EURO_LABEL=X$EURO_LABEL)
       return(X)
     }) -> list.population
@@ -306,7 +306,7 @@ get2020weeklydata = function(post.samples = pois.samples.list, geo.res, link_tab
 
   # For each i in 1:10 aggregate predicted/observed values by region 
   if(geo.res == "region"){
-    pblapply(post.samples, function(X){
+    lapply(post.samples, function(X){
       
       X <- select(X, starts_with("V"), "ID_space","EURO_LABEL")
       X <- left_join(X, link_table, by = c("ID_space"))
@@ -321,7 +321,7 @@ get2020weeklydata = function(post.samples = pois.samples.list, geo.res, link_tab
       
     }) -> list.sum.deaths
     
-    pblapply(post.samples, function(X){
+    lapply(post.samples, function(X){
       X <- data.frame(ID_space = X$ID_space, observed = X$deaths,EURO_LABEL=X$EURO_LABEL)
       X <- left_join(X, link_table, by = c("ID_space"))
       
@@ -333,7 +333,7 @@ get2020weeklydata = function(post.samples = pois.samples.list, geo.res, link_tab
       return(Y)
     }) -> list.observed
     
-    pblapply(post.samples, function(X){
+    lapply(post.samples, function(X){
       X <- data.frame(ID_space = X$ID_space, population = X$population,EURO_LABEL=X$EURO_LABEL)
       X <- left_join(X, link_table, by = c("ID_space"))
       
@@ -348,7 +348,7 @@ get2020weeklydata = function(post.samples = pois.samples.list, geo.res, link_tab
   
   # For each i in 1:10 aggregate predicted/observed values to get the total for the country
   if(geo.res == "country"){
-    pblapply(post.samples, function(X){
+    lapply(post.samples, function(X){
       
       X %>% 
         select(starts_with("V"),"EURO_LABEL") %>% 
@@ -360,7 +360,7 @@ get2020weeklydata = function(post.samples = pois.samples.list, geo.res, link_tab
       return(X)
     }) -> list.sum.deaths
     
-    pblapply(post.samples, function(X){
+    lapply(post.samples, function(X){
       X %>% 
         group_by(EURO_LABEL) %>% 
         summarise(observed = sum(deaths)) %>% 
@@ -369,7 +369,7 @@ get2020weeklydata = function(post.samples = pois.samples.list, geo.res, link_tab
       return(Y)
     }) -> list.observed
     
-    pblapply(post.samples, function(X){
+    lapply(post.samples, function(X){
       X %>% 
         group_by(EURO_LABEL) %>% 
         summarise(population = sum(population)) %>% 

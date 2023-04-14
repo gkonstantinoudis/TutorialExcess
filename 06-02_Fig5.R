@@ -11,13 +11,11 @@
 library(dplyr)
 library(ggplot2)
 library(sf)
-library(viridis)
-library(lubridate)
 library(ISOweek)
+library(lubridate)
+library(viridis)
 library(patchwork)
-library(sf)
 library(RColorBrewer)
-library(leaflet)
 
 
 load("Output/Italy.RData")
